@@ -41,11 +41,21 @@ export default function ProfilePage() {
 
   const handleFieldUpdate = async (field: string) => {
     try {
-      await updateUserField(field, fieldValues[field]);
+      setError('');
+      const value = fieldValues[field];
+      
+      if (!value.trim()) {
+        setError(`${field} cannot be empty`);
+        return;
+      }
+
+      await updateUserField(field, value);
       setSuccessMessage(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
       setEditingField(null);
-    } catch (err) {
-      setError(`Error updating ${field}`);
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || `Error updating ${field}`;
+      setError(errorMessage);
+      console.error(`Error updating ${field}:`, err);
     }
   };
 

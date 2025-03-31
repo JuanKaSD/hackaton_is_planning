@@ -16,8 +16,6 @@ export default function Navbar() {
     router.push('/');
   };
 
-  console.log({user})
-
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>

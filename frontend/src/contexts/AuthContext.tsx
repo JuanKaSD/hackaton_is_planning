@@ -1,14 +1,14 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '@/api/axios';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   setAuth: (value: boolean, userData?: any) => void;
-  updateUser: (userData: { name: string; email: string }) => Promise<any>;
+  updateUser: (userData: { [key: string]: string }) => Promise<any>;
   deleteAccount: () => Promise<void>;
   user: any;
-  updateUserField: (field: string, value: string) => Promise<any>;
+  updateUserField: (field: string, value: string) => Promise<void>;
   updatePassword: (currentPassword: string, newPassword: string) => Promise<any>;
 }
 
@@ -36,10 +36,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserProfile = async (token: string) => {
     try {
-      const response = await axios.get('/api/users/profile', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const userId = localStorage.getItem('userId');
+      const response = await api.get(`/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       setUser(response.data);
     } catch (error) {
@@ -54,52 +53,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateUser = async (userData: { name: string; email: string }) => {
+  const updateUser = async (userData: { [key: string]: string }) => {
     try {
-      const response = await axios.put('/api/users/profile', userData, {
+      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('token');
+      const response = await api.put(`/users/${userId}`, userData, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`  // Fixed: Replaced getToken() with direct access
+          Authorization: `Bearer ${token}`
         }
       });
-      
       const updatedUser = response.data;
-      setUser(updatedUser);
+      setUser(prev => ({ ...prev, ...userData }));
       return updatedUser;
     } catch (error) {
-      console.error('Error updating user:', error);
       throw error;
     }
   };
 
   const updateUserField = async (field: string, value: string) => {
     try {
-      const response = await axios.patch('/api/users/profile', { [field]: value }, {
+      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await api.put(`/users/${userId}`, { [field]: value }, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${token}`
         }
       });
-      
-      const updatedUser = response.data;
-      setUser(prev => ({ ...prev, [field]: value }));
-      return updatedUser;
+
+      if (response.data) {
+        setUser(prev => ({ ...prev, [field]: value }));
+        return response.data;
+      }
+      throw new Error('Failed to update user field');
     } catch (error) {
-      console.error(`Error updating ${field}:`, error);
+      console.error(`Error updating field ${field}:`, error);
       throw error;
     }
   };
 
   const updatePassword = async (currentPassword: string, newPassword: string) => {
     try {
-      const response = await axios.post('/api/users/change-password', {
+      const userId = localStorage.getItem('userId');
+      const response = await api.post(`/users/${userId}/password`, {
         current_password: currentPassword,
         new_password: newPassword
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
       });
       return response.data;
     } catch (error) {
@@ -110,12 +114,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const deleteAccount = async () => {
     try {
-      await axios.delete('/api/users/profile', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      const userId = localStorage.getItem('userId');
+      await api.delete(`/users/${userId}`);
       localStorage.removeItem('token');
+      localStorage.removeItem('userId');
       setIsAuthenticated(false);
       setUser(null);
     } catch (error) {

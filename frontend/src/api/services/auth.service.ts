@@ -12,8 +12,8 @@ export const authService = {
     const response = await api.post<AuthResponse>('/auth/login', credentials);
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userId', response.data.user.id);
       setAuthCallback?.(true);
-      // Asumiendo que el backend devuelve {token, user}
       return response.data;
     }
     return response.data;
@@ -23,8 +23,8 @@ export const authService = {
     const response = await api.post<AuthResponse>('/auth/register', credentials);
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userId', response.data.user.id);
       setAuthCallback?.(true);
-      // Asumiendo que el backend devuelve {token, user}
       return response.data;
     }
     return response.data;
@@ -32,6 +32,7 @@ export const authService = {
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     setAuthCallback?.(false);
   }
 };
