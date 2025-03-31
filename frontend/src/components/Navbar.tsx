@@ -8,13 +8,15 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAuthenticated, setAuth } = useAuth();
+  const { isAuthenticated, setAuth, user } = useAuth();
 
   const handleLogout = () => {
     authService.logout();
     setAuth(false);
     router.push('/');
   };
+
+  console.log({user})
 
   return (
     <nav className={styles.navbar}>
@@ -23,19 +25,36 @@ export default function Navbar() {
           Hackathon
         </Link>
         <div className={styles.links}>
-          {!isAuthenticated ? (
+          {isAuthenticated ? (
             <>
-              <Link href="/login" className={pathname === '/login' ? styles.active : ''}>
+              <span className={styles.userName}>
+                {user?.name || 'User'}
+              </span>
+              <Link
+                href="/profile"
+                className={pathname === '/profile' ? styles.active : ''}
+              >
+                Profile
+              </Link>
+              <button onClick={handleLogout} className={styles.logoutButton}>
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className={pathname === '/login' ? styles.active : ''}
+              >
                 Login
               </Link>
-              <Link href="/signup" className={pathname === '/signup' ? styles.active : ''}>
+              <Link
+                href="/signup"
+                className={pathname === '/signup' ? styles.active : ''}
+              >
                 Sign Up
               </Link>
             </>
-          ) : (
-            <button onClick={handleLogout} className={styles.logoutButton}>
-              Logout
-            </button>
           )}
         </div>
       </div>

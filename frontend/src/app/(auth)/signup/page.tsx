@@ -51,13 +51,14 @@ export default function SignupPage() {
     setLoading(true);
     
     try {
-      await authService.signup({
+      const response = await authService.signup({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
         password_confirmation: formData.confirmPassword
       });
+      setAuth(true, response.user);
       router.push('/');
       router.refresh(); // This will force a refresh of server components
     } catch (err: any) {

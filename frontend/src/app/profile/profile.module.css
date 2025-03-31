@@ -1,0 +1,325 @@
+.container {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.title {
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.section {
+  background: var(--background-secondary);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup input:hover {
+  border-color: var(--primary);
+  background-color: var(--background-secondary);
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: var(--background-secondary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+}
+
+.submitButton {
+  padding: 0.875rem;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.submitButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+.dangerZone {
+  background: var(--background-secondary);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--danger-color, #dc3545);
+}
+
+.dangerText {
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.deleteButton {
+  padding: 0.875rem;
+  background: linear-gradient(135deg, var(--danger-color, #dc3545), #ff4d4d);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 1rem;
+  box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2);
+}
+
+.deleteButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px rgba(220, 53, 69, 0.3);
+}
+
+.deleteButton:active {
+  transform: translateY(0);
+}
+
+.errorMessage {
+  background-color: var(--danger-color, #dc3545);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.successMessage {
+  background-color: var(--success-color, #28a745);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.fieldGroup {
+  margin-bottom: 1.5rem;
+  background: var(--background-primary);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.fieldContainer {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.fieldContainer input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fieldContainer input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: var(--background-secondary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+}
+
+.fieldContainer span {
+  flex: 1;
+  font-size: 1rem;
+  color: var(--text-primary);
+  padding: 0.75rem;
+}
+
+.fieldActions {
+  display: flex;
+  gap: 0.75rem;
+  min-width: 180px;
+  justify-content: flex-end;
+}
+
+.editButton {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.saveButton {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--success-color, #28a745), #34d058);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.cancelButton {
+  padding: 0.5rem 1rem;
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.editButton:hover,
+.saveButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cancelButton:hover {
+  background: var(--border-color);
+  transform: translateY(-1px);
+}
+
+.fieldGroup {
+  margin-bottom: 1.5rem;
+}
+
+.fieldContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.fieldActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editButton {
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveButton {
+  padding: 0.5rem 1rem;
+  background: var(--success-color, #28a745);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelButton {
+  padding: 0.5rem 1rem;
+  background: var(--border-color);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editButton:hover,
+.saveButton:hover,
+.cancelButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup input,
+.fieldContainer input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--background-primary);
+  border: 1px solid var(--accent);
+  color: var(--text-primary);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup input:hover,
+.fieldContainer input:hover {
+  border-color: var(--primary);
+  background-color: var(--background-secondary);
+}
+
+.formGroup input:focus,
+.fieldContainer input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: var(--background-secondary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+}

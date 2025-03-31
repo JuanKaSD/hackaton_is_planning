@@ -69,3 +69,11 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(2, 132, 199, 0.2);
 }
+
+.userName {
+  color: var(--text-primary);
+  margin-right: 1rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}

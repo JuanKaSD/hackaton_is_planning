@@ -13,6 +13,8 @@ export const authService = {
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       setAuthCallback?.(true);
+      // Asumiendo que el backend devuelve {token, user}
+      return response.data;
     }
     return response.data;
   },
@@ -22,6 +24,8 @@ export const authService = {
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       setAuthCallback?.(true);
+      // Asumiendo que el backend devuelve {token, user}
+      return response.data;
     }
     return response.data;
   },

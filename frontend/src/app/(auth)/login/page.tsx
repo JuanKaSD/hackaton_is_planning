@@ -27,7 +27,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await authService.login(formData);
+      const response = await authService.login(formData);
+      setAuth(true, response.user);
       router.push('/');
       router.refresh(); // This will force a refresh of server components
     } catch (err: any) {
