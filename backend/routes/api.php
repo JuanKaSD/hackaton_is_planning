@@ -21,27 +21,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('user.delete');
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
-    
-    // Enterprise routes
-    Route::group(['prefix' => 'enterprise', 'middleware' => 'enterprise'], function () {
-        Route::get('/dashboard', function () {
-            return response()->json([
-                'message' => 'Enterprise dashboard'
-            ]);
-        });
-    });
-});
-
-// Public airline routes - specifying explicit route names
-Route::get('airlines', [AirlineController::class, 'index'])->name('airlines.index');
-Route::get('airlines/{airline}', [AirlineController::class, 'show'])->name('airlines.show');
-Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('airlines', [AirlineController::class, 'index'])->name('airlines.index');
+    Route::get('airlines/{airline}', [AirlineController::class, 'show'])->name('airlines.show');
     Route::post('airlines', [AirlineController::class, 'store'])->name('airlines.store');
     Route::put('airlines/{airline}', [AirlineController::class, 'update'])->name('airlines.update');
     Route::delete('airlines/{airline}', [AirlineController::class, 'destroy'])->name('airlines.destroy');
+    Route::group(['prefix' => 'enterprise', 'middleware' => ['auth:sanctum', 'enterprise']], function () {
+        Route::get('airlines', [AirlineController::class, 'index'])->name('enterprise.airlines.index');
+    });
 });
 
-// Enterprise-specific airline routes
-Route::group(['prefix' => 'enterprise', 'middleware' => ['auth:sanctum', 'enterprise']], function () {
-    Route::get('airlines', [AirlineController::class, 'index'])->name('enterprise.airlines.index');
-});
