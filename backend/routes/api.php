@@ -17,8 +17,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('users/{user}/edit', [UserController::class, 'update'])->name('users.edit');
     Route::post('auth/logout', [UserController::class, 'logout']);
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('user.delete');
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
     Route::get('airlines', [AirlineController::class, 'index'])->name('airlines.index');
     Route::get('airlines/{airline}', [AirlineController::class, 'show'])->name('airlines.show');
     Route::post('airlines', [AirlineController::class, 'store'])->name('airlines.store');
