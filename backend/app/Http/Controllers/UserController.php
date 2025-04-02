@@ -77,14 +77,10 @@ class UserController extends Controller
      */
     public function logout(Request $request)
     {
-        // More aggressive token deletion
         if ($request->user()) {
-            // Delete the current token that was used for this request
-            $request->user()->currentAccessToken()->delete();
 
-            // For extra certainty in tests, you could even delete all tokens
-            // Uncomment the following line to delete all user tokens
-            // $request->user()->tokens()->delete();
+            $request->user()->currentAccessToken()->delete();
+            
         }
 
         return response()->json(['message' => 'Logged out successfully']);
@@ -106,7 +102,7 @@ class UserController extends Controller
                 Rule::unique('users')->ignore($user->id),
             ],
             'phone' => 'sometimes|string|max:255',
-            'password' => 'sometimes|string|min:8|confirmed',
+            'password' => 'sometimes|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z\d])/|confirmed',
         ]);
 
         if ($validator->fails()) {
