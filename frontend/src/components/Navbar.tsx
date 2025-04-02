@@ -6,20 +6,37 @@ import styles from "@/styles/Navbar.module.css";
 import { usePathname, useRouter } from "next/navigation";
 import { authService } from "@/api/services/auth.service";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
-
+import { useState, useEffect, useRef } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { isAuthenticated, setAuth } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     authService.logout();
     setAuth(false);
     router.push('/');
   };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   return (
     <nav className={styles.navbar}>
@@ -29,7 +46,7 @@ export default function Navbar() {
         </Link>
         <div className={styles.links}>
           {!isAuthenticated ? (
-            <div className={styles.dropdown}>
+            <div className={styles.dropdown} ref={dropdownRef}>
               <button 
                 onClick={() => setDropdownOpen(!dropdownOpen)} 
                 className={styles.iconButton}
