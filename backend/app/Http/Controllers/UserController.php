@@ -38,10 +38,15 @@ class UserController extends Controller
 
         // Create a new token
         $token = $user->createToken('auth-token')->plainTextToken;
+        
+        // Calculate token expiration time
+        $expirationTime = now()->addMinutes(config('sanctum.expiration', 10));
 
         return response()->json([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'token_expires_at' => $expirationTime->toDateTimeString(),
+            'token_valid_for' => '10 minutes'
         ]);
     }
 
@@ -65,10 +70,15 @@ class UserController extends Controller
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;
+        
+        // Calculate token expiration time
+        $expirationTime = now()->addMinutes(config('sanctum.expiration', 10));
 
         return response()->json([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'token_expires_at' => $expirationTime->toDateTimeString(),
+            'token_valid_for' => '10 minutes'
         ], 201);
     }
 
