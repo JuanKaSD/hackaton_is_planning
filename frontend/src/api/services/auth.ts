@@ -1,7 +1,6 @@
 import { LoginCredentials, SignupCredentials, AuthResponse } from '@/interfaces/auth';
 import axios from 'axios';
-
-const API_URL = 'http://192.168.68.103:8000/api';
+import { API_URL } from '@/api/axios';
 
 const authApi = axios.create({
   baseURL: API_URL,
