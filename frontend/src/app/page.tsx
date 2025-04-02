@@ -14,6 +14,10 @@ export default function HomePage() {
           <Link href="/signup" className={styles.secondaryButton}>
             Join Us
           </Link>
+          
+          <Link href="/pageFlight.tsx">
+            Mi Página
+          </Link>
         </div>
       </section>
       <section className={styles.features}>
