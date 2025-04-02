@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -16,82 +18,76 @@ class UserController extends Controller
         return User::all();
     }
 
+    /**
+     * Handle user login and token creation
+     */
     public function login(Request $request)
     {
-        // Validación de los datos de entrada
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string',
+            'password' => 'required',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-
-        // Verificar si el usuario ya existe en la base de datos
         $user = User::where('email', $request->email)->first();
 
-        // Si el usuario no existe, crearlo
-        if (!$user) {
-            $user = User::create([
-                'name' => $request->email, // Usamos el email como nombre por defecto (o puedes pedir un nombre)
-                'email' => $request->email,
-                'phone' => $request->phone ?? 'No phone', // Si no se pasa el teléfono, asignamos un valor por defecto
-                'password' => Hash::make($request->password),
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        // Verificar si la contraseña proporcionada coincide con la del usuario
-        if (Hash::check($request->password, $user->password)) {
-            // Crear el token para el usuario
-            $token = $user->createToken('YourAppName')->plainTextToken;
+        // Create a new token
+        $token = $user->createToken('auth-token')->plainTextToken;
 
-            // Devolver la respuesta con el token
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => $user,
-                'token' => $token,
-            ], 200);
-        }
-
-        // Si las credenciales no son correctas, devolver error
         return response()->json([
-            'message' => 'Invalid credentials',
-        ], 401);
+            'user' => $user,
+            'token' => $token
+        ]);
     }
 
-
-
+    /**
+     * Handle user registration and token creation
+     */
     public function store(Request $request)
     {
-        // Validación de los datos
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'phone' => 'nullable|string|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-
-        // Crear el usuario
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'phone' => $validated['phone'] ?? '', // Provide default empty string
         ]);
 
-        // Crear el token para el usuario
-        $token = $user->createToken('YourAppName')->plainTextToken;
+        $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
-            'message' => 'User created successfully',
             'user' => $user,
-            'token' => $token,
+            'token' => $token
         ], 201);
+    }
+
+    /**
+     * Revoke the user's current token
+     */
+    public function logout(Request $request)
+    {
+        // More aggressive token deletion
+        if ($request->user()) {
+            // Delete the current token that was used for this request
+            $request->user()->currentAccessToken()->delete();
+
+            // For extra certainty in tests, you could even delete all tokens
+            // Uncomment the following line to delete all user tokens
+            // $request->user()->tokens()->delete();
+        }
+
+        return response()->json(['message' => 'Logged out successfully']);
     }
 
     public function show(User $user)
@@ -134,9 +130,66 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function destroy(User $user)
+    /**
+     * Delete the specified user.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
     {
-        $user->delete();
-        return response()->json(null, 204);
+        try {
+            // Find the user by ID
+            $user = User::find($id);
+
+            // Check if user exists
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+
+            // Get authenticated user
+            $authUser = Auth::user();
+            
+            // Check if user is authenticated
+            if (!Auth::check() || !$authUser) {
+                return response()->json(['message' => 'Unauthorized access'], 401);
+            }
+
+            // Asegurarse que el authUser->id y el user->id son integers para comparación segura
+            $authUserId = (int)$authUser->id;
+            $userId = (int)$user->id;
+
+            // Check if user is trying to delete their own account (usando ===)
+            $isOwnAccount = $authUserId === $userId;
+            
+            // Agregar logging para depuración
+            Log::debug("Auth user ID: $authUserId, Target user ID: $userId, Is own account: " . ($isOwnAccount ? 'true' : 'false'));
+            
+            // Only allow users to delete their own account
+            if (!$isOwnAccount) {
+                return response()->json(['message' => 'Unauthorized to delete this user'], 403);
+            }
+
+            // Delete user tokens first to prevent authentication issues
+            $user->tokens()->delete();
+            
+            // Delete the user
+            $deleted = $user->delete();
+            
+            // Log deletion for debugging
+            Log::info("User deletion attempted: ID=$id, Success=" . ($deleted ? 'true' : 'false'));
+            
+            if (!$deleted) {
+                return response()->json(['message' => 'Failed to delete user'], 500);
+            }
+
+            return response()->json(['message' => 'User deleted successfully'], 200);
+        } catch (\Exception $e) {
+            Log::error('User deletion error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            return response()->json([
+                'message' => 'Error deleting user',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

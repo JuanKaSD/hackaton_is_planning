@@ -29,6 +29,8 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'phone' => fake()->phoneNumber(),
+            'user_type' => 'client', // Default to client
         ];
     }
 
@@ -39,6 +41,26 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the user is a client.
+     */
+    public function client(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'user_type' => 'client',
+        ]);
+    }
+
+    /**
+     * Indicate that the user is an enterprise.
+     */
+    public function enterprise(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'user_type' => 'enterprise',
         ]);
     }
 }
