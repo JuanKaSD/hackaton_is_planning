@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'user_type',
+        'phone',
     ];
 
     /**
@@ -43,6 +45,27 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'user_type' => 'string',
         ];
+    }
+    
+    /**
+     * Check if the user is a client.
+     * 
+     * @return bool
+     */
+    public function isClient(): bool
+    {
+        return $this->user_type === 'client';
+    }
+    
+    /**
+     * Check if the user is an enterprise.
+     * 
+     * @return bool
+     */
+    public function isEnterprise(): bool
+    {
+        return $this->user_type === 'enterprise';
     }
 }
