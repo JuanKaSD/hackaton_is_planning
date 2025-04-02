@@ -77,3 +77,46 @@
   display: inline-flex;
   align-items: center;
 }
+
+.iconButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #fff;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  z-index: 1000;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dropdownMenu a {
+  display: block;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.dropdownMenu a:hover {
+  background-color: var(--primary);
+}
+
+.dropdownMenu a.active {
+  font-weight: bold;
+}
