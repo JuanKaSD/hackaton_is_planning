@@ -17,9 +17,6 @@ class Airline extends Model
      */
     protected $fillable = [
         'name',
-        'code',
-        'logo',
-        'description',
         'enterprise_id',
     ];
 
