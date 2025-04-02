@@ -11,6 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Cache tables
+        Schema::create('cache', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->mediumText('value');
+            $table->integer('expiration');
+        });
+
+        Schema::create('cache_locks', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->string('owner');
+            $table->integer('expiration');
+        });
+
+        // Jobs tables
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->string('queue')->index();
@@ -43,6 +57,18 @@ return new class extends Migration
             $table->longText('exception');
             $table->timestamp('failed_at')->useCurrent();
         });
+
+        // Personal access tokens
+        Schema::create('personal_access_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->morphs('tokenable');
+            $table->string('name');
+            $table->string('token', 64)->unique();
+            $table->text('abilities')->nullable();
+            $table->timestamp('last_used_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -50,8 +76,16 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Cache tables
+        Schema::dropIfExists('cache');
+        Schema::dropIfExists('cache_locks');
+        
+        // Jobs tables
         Schema::dropIfExists('jobs');
         Schema::dropIfExists('job_batches');
         Schema::dropIfExists('failed_jobs');
+        
+        // Personal access tokens
+        Schema::dropIfExists('personal_access_tokens');
     }
 };
