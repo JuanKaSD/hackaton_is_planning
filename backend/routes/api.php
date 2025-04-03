@@ -3,6 +3,9 @@
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\AirlineController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\Api\AirportController;
+use App\Http\Controllers\Api\AirplaneController;
+use App\Http\Controllers\Api\FlightController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -29,5 +32,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::group(['prefix' => 'enterprise', 'middleware' => ['auth:sanctum', 'enterprise']], function () {
         Route::get('airlines', [AirlineController::class, 'index'])->name('enterprise.airlines.index');
     });
-});
 
+    // Airport Routes
+    Route::get('airports', [AirportController::class, 'index'])->name('airports.index');
+    Route::get('airports/{airport}', [AirportController::class, 'show'])->name('airports.show');
+    Route::post('airports', [AirportController::class, 'store'])->name('airports.store');
+    Route::put('airports/{airport}', [AirportController::class, 'update'])->name('airports.update');
+    Route::delete('airports/{airport}', [AirportController::class, 'destroy'])->name('airports.destroy');
+
+    // Airplane Routes
+    Route::get('airplanes', [AirplaneController::class, 'index'])->name('airplanes.index');
+    Route::get('airplanes/{airplane}', [AirplaneController::class, 'show'])->name('airplanes.show');
+    Route::post('airplanes', [AirplaneController::class, 'store'])->name('airplanes.store');
+    Route::put('airplanes/{airplane}', [AirplaneController::class, 'update'])->name('airplanes.update');
+    Route::delete('airplanes/{airplane}', [AirplaneController::class, 'destroy'])->name('airplanes.destroy');
+
+    // Flight Routes
+    Route::get('flights', [FlightController::class, 'index'])->name('flights.index');
+    Route::get('flights/{flight}', [FlightController::class, 'show'])->name('flights.show');
+    Route::post('flights', [FlightController::class, 'store'])->name('flights.store');
+    Route::put('flights/{flight}', [FlightController::class, 'update'])->name('flights.update');
+    Route::delete('flights/{flight}', [FlightController::class, 'destroy'])->name('flights.destroy');
+});
