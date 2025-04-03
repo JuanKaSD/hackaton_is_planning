@@ -33,9 +33,69 @@ class Flight extends Model
      */
     protected $casts = [
         'flight_date' => 'datetime',
-        'status' => 'string',
         'passenger_capacity' => 'integer',
     ];
+    
+    /**
+     * The possible status values for a flight.
+     */
+    const STATUS_AVAILABLE = 'available';
+    const STATUS_UNAVAILABLE = 'unavailable';
+    const STATUS_CANCELED = 'canceled';
+    
+    /**
+     * Check if the flight is available for booking.
+     */
+    public function isAvailable(): bool
+    {
+        return $this->status === self::STATUS_AVAILABLE;
+    }
+    
+    /**
+     * Check if the flight is unavailable.
+     */
+    public function isUnavailable(): bool
+    {
+        return $this->status === self::STATUS_UNAVAILABLE;
+    }
+    
+    /**
+     * Check if the flight is canceled.
+     */
+    public function isCanceled(): bool
+    {
+        return $this->status === self::STATUS_CANCELED;
+    }
+    
+    /**
+     * Mark the flight as available.
+     */
+    public function markAsAvailable(): self
+    {
+        $this->status = self::STATUS_AVAILABLE;
+        $this->save();
+        return $this;
+    }
+    
+    /**
+     * Mark the flight as unavailable.
+     */
+    public function markAsUnavailable(): self
+    {
+        $this->status = self::STATUS_UNAVAILABLE;
+        $this->save();
+        return $this;
+    }
+    
+    /**
+     * Mark the flight as canceled.
+     */
+    public function markAsCanceled(): self
+    {
+        $this->status = self::STATUS_CANCELED;
+        $this->save();
+        return $this;
+    }
 
     /**
      * Get the airline that owns the flight.

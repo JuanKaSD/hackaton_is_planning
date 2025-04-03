@@ -65,6 +65,13 @@ class BookingController extends Controller
 
             // Find the flight
             $flight = Flight::findOrFail($validated['flight_id']);
+            
+            // Check if flight is available for booking
+            if (!$flight->isAvailable()) {
+                return response()->json([
+                    'message' => 'This flight is not available for booking'
+                ], 400);
+            }
 
             // Check if booking is being made less than 24 hours before departure
             $flightDate = Carbon::parse($flight->flight_date);

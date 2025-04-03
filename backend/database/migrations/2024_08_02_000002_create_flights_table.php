@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('destination', 3);
             $table->integer('duration'); // Duration in minutes
             $table->dateTime('flight_date');
-            $table->boolean('status')->default(false); // 0: Scheduled, 1: Completed
+            $table->enum('status', ['available', 'unavailable', 'canceled'])->default('available');
             $table->integer('passenger_capacity'); // Added passenger capacity field
             $table->timestamps();
             

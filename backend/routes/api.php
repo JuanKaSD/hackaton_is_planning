@@ -31,17 +31,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('flights', [FlightController::class, 'store'])->name('flights.store');
         Route::put('flights/{flight}', [FlightController::class, 'update'])->name('flights.update');
         Route::delete('flights/{flight}', [FlightController::class, 'destroy'])->name('flights.destroy');
+        // Airport Routes
+        Route::get('airports', [AirportController::class, 'index'])->name('airports.index');
+        // Booking Routes - Only for clients
+        Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
+        Route::post('bookings', [BookingController::class, 'store'])->name('bookings.store');
+        Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+        // Flight Routes
+        Route::get('flights', [FlightController::class, 'index'])->name('flights.index');
+        Route::get('flights/{flight}', [FlightController::class, 'show'])->name('flights.show');
     });
-
-    // Airport Routes
-    Route::get('airports', [AirportController::class, 'index'])->name('airports.index');
-
-    // Booking Routes - Only for clients
-    Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
-    Route::post('bookings', [BookingController::class, 'store'])->name('bookings.store');
-    Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
-
-    // Flight Routes
-    Route::get('flights', [FlightController::class, 'index'])->name('flights.index');
-    Route::get('flights/{flight}', [FlightController::class, 'show'])->name('flights.show');
 });

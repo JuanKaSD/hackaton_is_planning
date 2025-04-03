@@ -27,13 +27,8 @@ class FlightController extends Controller
      */
     public function index(): JsonResponse
     {
-        $flights = Flight::with(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date', 'status'])
+        $flights = Flight::with(['airline:id,name', 'originAirport', 'destinationAirport'])
             ->get();
-
-        // Determine status for each flight
-        $flights->each(function ($flight) {
-            $flight->status = $this->determineFlightstatus($flight);
-        });
 
         return response()->json($flights);
     }
@@ -62,7 +57,13 @@ class FlightController extends Controller
                 'duration' => 'required|integer|min:1',
                 'flight_date' => 'required|date|after:now',
                 'passenger_capacity' => 'integer|min:1',
+                'status' => 'sometimes|in:available,unavailable,canceled',
             ]);
+
+            // If status is not provided, default to 'available'
+            if (!isset($validated['status'])) {
+                $validated['status'] = Flight::STATUS_AVAILABLE;
+            }
 
             $flight = Flight::create($validated);
             $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date']);
@@ -117,6 +118,7 @@ class FlightController extends Controller
                 'duration' => 'sometimes|required|integer|min:1',
                 'flight_date' => 'sometimes|required|date|after:now',
                 'passenger_capacity' => 'integer|min:1',
+                'status' => 'sometimes|in:available,unavailable,canceled',
             ]);
 
             $flight->update($validated);
@@ -156,10 +158,19 @@ class FlightController extends Controller
                 ], 403);
             }
 
+            // Count related bookings before deletion for logging purposes
+            $bookingsCount = $flight->bookings()->count();
+            
+            // The database will handle the cascade deletion due to the constraint
+            // defined in the migration: foreignId('flight_id')->constrained()->onDelete('cascade')
             $flight->delete();
+            
+            // Log the deletion of flight and related bookings
+            Log::info("Flight #{$flight->id} deleted with $bookingsCount related bookings");
 
             return response()->json([
-                'message' => 'Flight deleted successfully'
+                'message' => 'Flight deleted successfully',
+                'related_bookings_deleted' => $bookingsCount
             ]);
         } catch (\Exception $e) {
             Log::error('Error deleting flight: ' . $e->getMessage());
