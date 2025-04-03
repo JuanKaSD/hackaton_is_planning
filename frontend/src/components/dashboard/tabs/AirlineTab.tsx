@@ -2,12 +2,18 @@
 import { useState } from 'react';
 import { useAirlines } from '@/contexts/AirlineContext';
 import { Dropdown } from '@/components/Dropdown';
+import { EditAirlineModal } from '@/components/EditAirlineModal';
 import styles from '@/styles/Tabs.module.css';
 
+interface Airline {
+  id: string; // Changed from number to string to match AirlineContext
+  name: string;
+}
+
 export function AirlineTab() {
-  const { airlines, addAirline, updateAirline, deleteAirline, loading } = useAirlines();
+  const { airlines, addAirline, updateAirline, deleteAirline, loading, fetchAirlines } = useAirlines();
   const [name, setName] = useState('');
-  const [editingAirline, setEditingAirline] = useState<string | null>(null);
+  const [editingAirline, setEditingAirline] = useState<Airline | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,13 +21,21 @@ export function AirlineTab() {
     setName('');
   };
 
-  const handleUpdate = async (id: string, newName: string) => {
+  const handleUpdate = async (id: string, data: { name: string }) => { // Changed from number to string
     try {
-      await updateAirline(id, { name: newName });
+      await updateAirline(id, data);
       setEditingAirline(null);
     } catch (err) {
       console.error('Error updating airline:', err);
     }
+  };
+
+  const handleEditClick = (airline: Airline) => {
+    setEditingAirline(airline);
+  };
+
+  const closeModal = () => {
+    setEditingAirline(null);
   };
 
   return (
@@ -46,28 +60,33 @@ export function AirlineTab() {
             {airlines.map((airline) => (
               <div key={airline.id} className={styles.item}>
                 <div>
-                  {editingAirline === airline.id ? (
-                    <Dropdown
-                      value={airline.name}
-                      onChange={(value) => handleUpdate(airline.id, value)}
-                      options={[
-                        { value: airline.name, label: airline.name },
-                        // Add more name options if needed
-                      ]}
-                      placeholder="Edit airline name"
-                      className={styles.editDropdown}
-                      onBlur={() => setEditingAirline(null)}
-                    />
-                  ) : (
-                    <strong onClick={() => setEditingAirline(airline.id)}>
-                      {airline.name}
-                    </strong>
-                  )}
+                  <strong>{airline.name}</strong>
                 </div>
-                <button onClick={() => deleteAirline(airline.id)}>Delete</button>
+                <div className={styles.buttonGroup}>
+                  <button 
+                    onClick={() => handleEditClick(airline)}
+                    className={styles.editButton}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => deleteAirline(airline.id)}
+                    className={styles.deleteButton}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
+
+          {editingAirline && (
+            <EditAirlineModal
+              airline={editingAirline}
+              onClose={closeModal}
+              onSave={handleUpdate}
+            />
+          )}
         </>
       )}
     </div>

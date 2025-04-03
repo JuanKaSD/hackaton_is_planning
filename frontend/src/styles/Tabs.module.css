@@ -169,3 +169,30 @@
   border-radius: 8px;
   color: var(--text-secondary);
 }
+
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.editButton {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.deleteButton {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.itemContent {
+  flex: 1;
+}
