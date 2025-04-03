@@ -11,6 +11,7 @@ use App\Http\Middleware\EnterpriseMiddleware;
 // Public routes
 Route::post('auth/register', [UserController::class, 'store']);
 Route::post('auth/login', [UserController::class, 'login']);
+Route::post('auth/logout', [UserController::class, 'logout']);
 
 // Token check route
 Route::middleware('auth:sanctum')->get('/check', function () {
@@ -24,7 +25,6 @@ Route::middleware('auth:sanctum')->get('/check', function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::put('users/{user}/edit', [UserController::class, 'update'])->name('users.edit');
-    Route::post('auth/logout', [UserController::class, 'logout']);
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('user.delete');
     Route::get('flights', [FlightController::class, 'index'])->name('flights.index');
     

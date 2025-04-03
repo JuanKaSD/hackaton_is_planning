@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useFlights } from '../../../contexts/FlightContext';
 import { useAirlines } from '../../../contexts/AirlineContext';
 import { useAirports } from '../../../contexts/AirportContext';
@@ -14,8 +14,8 @@ export function FlightTab() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [editFormData, setEditFormData] = useState({
-    origin_id: '',
-    destination_id: '',
+    origin: '',
+    destination: '',
     duration: '',
     flight_date: '',
     status: '',
@@ -24,8 +24,8 @@ export function FlightTab() {
   });
 
   const [formData, setFormData] = useState({
-    origin_id: '',
-    destination_id: '',
+    origin: '',
+    destination: '',
     duration: '',
     flight_date: '',
     status: 'available',
@@ -48,8 +48,8 @@ export function FlightTab() {
       status: 'available' // Ensure status is 'available' when submitting
     });
     setFormData({
-      origin_id: '',
-      destination_id: '',
+      origin: '',
+      destination: '',
       duration: '',
       flight_date: '',
       status: 'available',
@@ -63,8 +63,8 @@ export function FlightTab() {
   const handleEdit = (flight) => {
     setSelectedFlight(flight);
     setEditFormData({
-      origin_id: flight.origin_id,
-      destination_id: flight.destination_id,
+      origin: flight.origin,
+      destination: flight.destination,
       duration: flight.duration.toString(),
       flight_date: flight.flight_date.split('.')[0], // Remove milliseconds if any
       status: flight.status,
@@ -114,6 +114,21 @@ export function FlightTab() {
     );
   };
 
+  const groupedFlights = useMemo(() => {
+    const grouped = {};
+    flights.forEach(flight => {
+      const airline = airlines.find(a => a.id === flight.airline_id);
+      if (!grouped[airline?.id]) {
+        grouped[airline?.id] = {
+          airlineName: airline?.name || 'Unknown Airline',
+          flights: []
+        };
+      }
+      grouped[airline?.id].flights.push(flight);
+    });
+    return grouped;
+  }, [flights, airlines]);
+
   if (airlines.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -134,8 +149,8 @@ export function FlightTab() {
             {renderAirlineSelector()}
             <Dropdown
               label="Origin Airport"
-              value={formData.origin_id}
-              onChange={(value) => setFormData({ ...formData, origin_id: value })}
+              value={formData.origin}
+              onChange={(value) => setFormData({ ...formData, origin: value })}
               options={airports.map((airport) => ({
                 value: airport.id,
                 label: airport.id
@@ -145,8 +160,8 @@ export function FlightTab() {
             />
             <Dropdown
               label="Destination Airport"
-              value={formData.destination_id}
-              onChange={(value) => setFormData({ ...formData, destination_id: value })}
+              value={formData.destination}
+              onChange={(value) => setFormData({ ...formData, destination: value })}
               options={airports.map((airport) => ({
                 value: airport.id,
                 label: airport.id
@@ -187,22 +202,29 @@ export function FlightTab() {
           </form>
 
           <div className={styles.list}>
-            {flights.map((flight) => (
-              <div key={flight.id} className={styles.item}>
-                <div>
-                  <strong>From: {flight.origin_id} → To: {flight.destination_id}</strong>
-                  <p>Date: {new Date(flight.flight_date).toLocaleDateString()}</p>
-                  <p>Duration: {flight.duration} minutes</p>
-                  <p>Status: {flight.status}</p>
-                  <p>Capacity: {flight.passenger_capacity} passengers</p>
-                </div>
-                <div className={styles.actions}>
-                  <button onClick={() => handleEdit(flight)} className={styles.editButton}>
-                    Edit
-                  </button>
-                  <button onClick={() => deleteFlight(flight.id)} className={styles.deleteButton}>
-                    Delete
-                  </button>
+            {Object.entries(groupedFlights).map(([airlineId, data]) => (
+              <div key={airlineId} className={styles.airlineGroup}>
+                <h3 className={styles.airlineTitle}>{data.airlineName}</h3>
+                <div className={styles.flightsList}>
+                  {data.flights.map((flight) => (
+                    <div key={flight.id} className={styles.item}>
+                      <div>
+                        <strong>{flight.origin} → {flight.destination}</strong>
+                        <p>Date: {new Date(flight.flight_date).toLocaleDateString()}</p>
+                        <p>Duration: {flight.duration} minutes</p>
+                        <p>Status: {flight.status}</p>
+                        <p>Capacity: {flight.passenger_capacity} passengers</p>
+                      </div>
+                      <div className={styles.actions}>
+                        <button onClick={() => handleEdit(flight)} className={styles.editButton}>
+                          Edit
+                        </button>
+                        <button onClick={() => deleteFlight(flight.id)} className={styles.deleteButton}>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
@@ -216,8 +238,8 @@ export function FlightTab() {
                   {renderAirlineSelector()}
                   <Dropdown
                     label="Origin Airport"
-                    value={editFormData.origin_id}
-                    onChange={(value) => setEditFormData({ ...editFormData, origin_id: value })}
+                    value={editFormData.origin}
+                    onChange={(value) => setEditFormData({ ...editFormData, origin: value })}
                     options={airports.map((airport) => ({
                       value: airport.id,
                       label: airport.id
@@ -227,8 +249,8 @@ export function FlightTab() {
                   />
                   <Dropdown
                     label="Destination Airport"
-                    value={editFormData.destination_id}
-                    onChange={(value) => setEditFormData({ ...editFormData, destination_id: value })}
+                    value={editFormData.destination}
+                    onChange={(value) => setEditFormData({ ...editFormData, destination: value })}
                     options={airports.map((airport) => ({
                       value: airport.id,
                       label: airport.id

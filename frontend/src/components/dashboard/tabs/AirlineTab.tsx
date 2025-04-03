@@ -4,6 +4,7 @@ import { useAirlines } from '@/contexts/AirlineContext';
 import { Dropdown } from '@/components/Dropdown';
 import { EditAirlineModal } from '@/components/EditAirlineModal';
 import styles from '@/styles/Tabs.module.css';
+import { Plane, Edit2, Trash2, Plus, X } from 'lucide-react';
 
 interface Airline {
   id: string; // Changed from number to string to match AirlineContext
@@ -19,14 +20,28 @@ export function AirlineTab() {
     e.preventDefault();
     await addAirline({ name });
     setName('');
+    // Refresh airlines after adding
+    await fetchAirlines();
   };
 
   const handleUpdate = async (id: string, data: { name: string }) => { // Changed from number to string
     try {
       await updateAirline(id, data);
       setEditingAirline(null);
+      // Refresh airlines after updating
+      await fetchAirlines();
     } catch (err) {
       console.error('Error updating airline:', err);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteAirline(id);
+      // Refresh airlines after deleting
+      await fetchAirlines();
+    } catch (err) {
+      console.error('Error deleting airline:', err);
     }
   };
 
@@ -40,26 +55,35 @@ export function AirlineTab() {
 
   return (
     <div>
-      <h2 className={styles.tabTitle}>Manage Airlines</h2>
+      <h2 className={styles.tabTitle}>
+        <Plane className={styles.titleIcon} />
+        Manage Airlines
+      </h2>
       {loading ? (
         <p>Loading airlines...</p>
       ) : (
         <>
           <form onSubmit={handleSubmit} className={styles.form}>
-            <input
-              type="text"
-              placeholder="Airline Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <button type="submit">Add Airline</button>
+            <div className={styles.inputWrapper}>
+              <input
+                type="text"
+                placeholder="Airline Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+              <button type="submit" className={styles.addButton}>
+                <Plus size={20} />
+                Add Airline
+              </button>
+            </div>
           </form>
 
           <div className={styles.list}>
             {airlines.map((airline) => (
               <div key={airline.id} className={styles.item}>
-                <div>
+                <div className={styles.itemContent}>
+                  <Plane className={styles.itemIcon} />
                   <strong>{airline.name}</strong>
                 </div>
                 <div className={styles.buttonGroup}>
@@ -67,12 +91,14 @@ export function AirlineTab() {
                     onClick={() => handleEditClick(airline)}
                     className={styles.editButton}
                   >
+                    <Edit2 size={16} />
                     Edit
                   </button>
                   <button 
-                    onClick={() => deleteAirline(airline.id)}
+                    onClick={() => handleDelete(airline.id)}
                     className={styles.deleteButton}
                   >
+                    <Trash2 size={16} />
                     Delete
                   </button>
                 </div>
@@ -83,7 +109,15 @@ export function AirlineTab() {
           {editingAirline && (
             <div className={styles.modal}>
               <div className={styles.modalContent}>
-                <h3>Edit Airline</h3>
+                <div className={styles.modalHeader}>
+                  <h3>
+                    <Edit2 className={styles.modalIcon} />
+                    Edit Airline
+                  </h3>
+                  <button onClick={closeModal} className={styles.closeButton}>
+                    <X size={20} />
+                  </button>
+                </div>
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   handleUpdate(editingAirline.id, { name: editingAirline.name });
