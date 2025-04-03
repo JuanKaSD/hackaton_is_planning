@@ -38,7 +38,7 @@ class UserFactory extends Factory
      */
     public function client(): static
     {
-        return $this->status(fn (array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'user_type' => 'client',
         ]);
     }
@@ -48,7 +48,7 @@ class UserFactory extends Factory
      */
     public function enterprise(): static
     {
-        return $this->status(fn (array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'user_type' => 'enterprise',
         ]);
     }
