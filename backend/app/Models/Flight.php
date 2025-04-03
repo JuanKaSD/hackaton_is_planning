@@ -20,11 +20,10 @@ class Flight extends Model
         'airline_id',
         'origin',
         'destination',
-        'airplane_plate',
         'duration',
         'flight_date',
         'state',
-        'passenger_capacity', // Added passenger capacity
+        'passenger_capacity',
     ];
 
     /**
@@ -35,7 +34,7 @@ class Flight extends Model
     protected $casts = [
         'flight_date' => 'datetime',
         'state' => 'string',
-        'passenger_capacity' => 'integer', // Added cast for passenger capacity
+        'passenger_capacity' => 'integer',
     ];
 
     /**
@@ -60,14 +59,6 @@ class Flight extends Model
     public function destinationAirport(): BelongsTo
     {
         return $this->belongsTo(Airport::class, 'destination', 'id');
-    }
-
-    /**
-     * Get the airplane for this flight.
-     */
-    public function airplane(): BelongsTo
-    {
-        return $this->belongsTo(Airplane::class, 'airplane_plate', 'plate');
     }
 
     /**

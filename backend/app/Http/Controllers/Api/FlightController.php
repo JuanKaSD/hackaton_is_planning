@@ -27,7 +27,7 @@ class FlightController extends Controller
      */
     public function index(): JsonResponse
     {
-        $flights = Flight::with(['airline:id,name', 'originAirport', 'destinationAirport', 'airplane', 'duration', 'flight_date', 'state'])
+        $flights = Flight::with(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date', 'state'])
             ->get();
 
         // Determine state for each flight
@@ -59,14 +59,13 @@ class FlightController extends Controller
                 'airline_id' => 'required|exists:airlines,id',
                 'origin' => 'required|exists:airports,id',
                 'destination' => 'required|exists:airports,id|different:origin',
-                'airplane_plate' => 'required|exists:airplanes,plate',
                 'duration' => 'required|integer|min:1',
                 'flight_date' => 'required|date|after:now',
-                'passenger_capacity' => 'integer|min:1', // Added validation for passenger capacity
+                'passenger_capacity' => 'integer|min:1',
             ]);
 
             $flight = Flight::create($validated);
-            $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'airplane', 'duration', 'flight_date']);
+            $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date']);
 
             return response()->json([
                 'message' => 'Flight created successfully',
@@ -91,7 +90,7 @@ class FlightController extends Controller
      */
     public function show(Flight $flight): JsonResponse
     {
-        $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'airplane', 'duration', 'flight_date', 'state']);
+        $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date', 'state']);
         
         return response()->json($flight);
     }
@@ -115,14 +114,13 @@ class FlightController extends Controller
             $validated = $request->validate([
                 'origin' => 'sometimes|required|exists:airports,id',
                 'destination' => 'sometimes|required|exists:airports,id|different:origin',
-                'airplane_plate' => 'sometimes|required|exists:airplanes,plate',
                 'duration' => 'sometimes|required|integer|min:1',
                 'flight_date' => 'sometimes|required|date|after:now',
-                'passenger_capacity' => 'integer|min:1', // Added validation for passenger capacity
+                'passenger_capacity' => 'integer|min:1',
             ]);
 
             $flight->update($validated);
-            $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'airplane', 'duration', 'flight_date']);
+            $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date']);
 
             return response()->json([
                 'message' => 'Flight updated successfully',
