@@ -28,17 +28,11 @@ class AirlineController extends Controller
     {
         // Check if this is the enterprise route
         $routeName = Route::currentRouteName();
-        
-        if ($routeName === 'enterprise.airlines.index' && Auth::check()) {
-            // For enterprise route, only show airlines owned by the authenticated user
-            $airlines = Airline::where('enterprise_id', Auth::id())
-                ->with('enterprise:id,name')
-                ->get();
-        } else {
-            // For public route, show all airlines
-            $airlines = Airline::with('enterprise:id,name')->get();
-        }
-        
+
+        $airlines = Airline::where('enterprise_id', Auth::id())
+            ->with('enterprise:id,name')
+            ->get();
+
         return response()->json($airlines);
     }
 
@@ -50,16 +44,16 @@ class AirlineController extends Controller
         try {
             // Check authorization here
             $this->authorize('create', Airline::class);
-            
+
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
             ]);
-            
+
             // Automatically set the enterprise_id to the current user's id
             $validated['enterprise_id'] = Auth::id();
-            
+
             $airline = Airline::create($validated);
-            
+
             return response()->json([
                 'message' => 'Airline created successfully',
                 'data' => $airline
@@ -95,13 +89,13 @@ class AirlineController extends Controller
         try {
             // Check authorization here
             $this->authorize('update', $airline);
-            
+
             $validated = $request->validate([
                 'name' => 'sometimes|required|string|max:255',
             ]);
-            
+
             $airline->update($validated);
-            
+
             return response()->json([
                 'message' => 'Airline updated successfully',
                 'data' => $airline
@@ -128,9 +122,9 @@ class AirlineController extends Controller
         try {
             // Check authorization here
             $this->authorize('delete', $airline);
-            
+
             $airline->delete();
-            
+
             return response()->json([
                 'message' => 'Airline deleted successfully'
             ]);

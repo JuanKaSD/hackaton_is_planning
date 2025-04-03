@@ -92,9 +92,11 @@ class AirlineControllerTest extends TestCase
         $response = $this->actingAs($user, 'sanctum')
             ->postJson('/api/airlines', $airlineData);
 
-        // Assert error response - currently returning 500 but ideally should be 403
-        // TODO: Update to check for 403 once proper authorization is implemented
-        $response->assertStatus(500);
+        // Assert error response - should return 403 Forbidden
+        $response->assertStatus(403)
+            ->assertJson([
+                'message' => 'Unauthorized. Enterprise access only.'
+            ]);
 
         // Verify no airline was created in the database
         $this->assertDatabaseMissing('airlines', [
@@ -169,9 +171,8 @@ class AirlineControllerTest extends TestCase
         $response = $this->actingAs($enterprise2, 'sanctum')
             ->putJson("/api/airlines/{$airline->id}", $updateData);
 
-        // Assert error response - currently returning 500 but ideally should be 403
-        // TODO: Update to check for 403 once proper authorization is implemented
-        $response->assertStatus(500);
+        // Assert Forbidden response (middleware now returns 403)
+        $response->assertStatus(403);
 
         // Verify the airline was not updated in the database
         $this->assertDatabaseMissing('airlines', [
@@ -232,9 +233,8 @@ class AirlineControllerTest extends TestCase
         $response = $this->actingAs($enterprise2, 'sanctum')
             ->deleteJson("/api/airlines/{$airline->id}");
 
-        // Assert error response - currently returning 500 but ideally should be 403
-        // TODO: Update to check for 403 once proper authorization is implemented
-        $response->assertStatus(500);
+        // Assert Forbidden response (middleware now returns 403)
+        $response->assertStatus(403);
 
         // Verify the airline still exists in the database
         $this->assertDatabaseHas('airlines', [
