@@ -58,19 +58,27 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'user_type' => 'required|string',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:255',
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'user_type' => $validated['user_type'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? '', // Provide default empty string
         ]);
 
+        $user = User::where('email', $validated['email'])->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
         $token = $user->createToken('auth-token')->plainTextToken;
-        
+         
         // Calculate token expiration time
         $expirationTime = now()->addMinutes(config('sanctum.expiration', 10));
 
