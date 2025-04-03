@@ -19,9 +19,6 @@ class AirlineFactory extends Factory
     {
         return [
             'name' => fake()->company() . ' Airlines',
-            'code' => strtoupper(fake()->randomLetter() . fake()->randomLetter()),
-            'logo' => fake()->imageUrl(200, 200, 'business'),
-            'description' => fake()->paragraph(),
             'enterprise_id' => User::factory()->enterprise(),
         ];
     }
