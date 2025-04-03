@@ -108,7 +108,7 @@ class BookingController extends Controller
                 'user_id' => $user->id,
                 'flight_id' => $flight->id,
                 'status' => 'confirmed',
-                'booking_reference' => Booking::generateBookingReference(),
+                'booking_reference' => Booking::generateBookingReference($flight->airline_id),
             ]);
 
             $booking->save();

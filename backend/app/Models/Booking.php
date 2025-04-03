@@ -40,13 +40,20 @@ class Booking extends Model
     }
 
     /**
-     * Generate a unique booking reference.
+     * Generate a unique booking reference using airline name as prefix.
      *
+     * @param int $flightId
      * @return string
      */
-    public static function generateBookingReference(): string
+    public static function generateBookingReference(int $flightId): string
     {
-        $prefix = 'BK';
+        // Get the flight and its associated airline
+        $flight = Flight::with('airline')->findOrFail($flightId);
+        $airlineName = $flight->airline->name;
+        
+        // Get first two letters of airline name and convert to uppercase
+        $prefix = strtoupper(substr($airlineName, 0, 2));
+        
         $randomPart = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
         $timestamp = date('ymd');
         
