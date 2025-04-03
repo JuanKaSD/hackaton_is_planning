@@ -1,24 +1,25 @@
 "use client";
 import { useState } from 'react';
-import { useFlights } from '@/contexts/FlightContext';
-import { useAirlines } from '@/contexts/AirlineContext';
-import { Dropdown } from '@/components/Dropdown';
-import styles from '@/styles/Tabs.module.css';
+import { useFlights } from '../../../contexts/FlightContext';
+import { useAirlines } from '../../../contexts/AirlineContext';
+import { Dropdown } from '../../Dropdown';
+import styles from '../../../styles/Tabs.module.css';
 
 export function FlightTab() {
   const { flights, addFlight, deleteFlight, loading, fetchFlights } = useFlights();
   const { airlines } = useAirlines();
+  
   const [formData, setFormData] = useState({
     origin: '',
     destination: '',
     duration: '',
     flight_date: '',
-    status: 'available', // Default status is now 'available'
+    status: 'available',
     passenger_capacity: '',
-    airline_id: airlines[0]?.id || '' // Inicializar con la primera aerolínea si existe
+    airline_id: airlines[0]?.id || '' // Initialize with the first airline if it exists
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     await addFlight({
       ...formData,
@@ -33,7 +34,7 @@ export function FlightTab() {
       flight_date: '',
       status: 'available',
       passenger_capacity: '',
-      airline_id: airlines[0]?.id || '' // Resetear con la primera aerolínea si existe
+      airline_id: airlines[0]?.id || '' // Reset with the first airline if it exists
     });
     // Refresh flights list after adding a new flight
     await fetchFlights();
@@ -48,18 +49,18 @@ export function FlightTab() {
         </div>
       );
     }
-
+    
     return (
       <Dropdown
         label="Airline"
         value={formData.airline_id}
         onChange={(value) => setFormData({ ...formData, airline_id: value })}
-        options={airlines.map(airline => ({
+        options={airlines.map((airline) => ({
           value: airline.id,
-          label: airline.name
+          label: airline.name,
         }))}
         placeholder="Select Airline"
-        required
+        required={true}
       />
     );
   };
