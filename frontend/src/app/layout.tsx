@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AirlineProvider } from '@/contexts/AirlineContext';
 import { FlightProvider } from '@/contexts/FlightContext';
+import { AirportProvider } from '../contexts/AirportContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,10 +28,12 @@ export default function RootLayout({
         <AuthProvider>
           <AirlineProvider>
             <FlightProvider>
-              <Navbar />
-              <main>
-                {children}
-              </main>
+              <AirportProvider>
+                <Navbar />
+                <main>
+                  {children}
+                </main>
+              </AirportProvider>
             </FlightProvider>
           </AirlineProvider>
         </AuthProvider>

@@ -31,8 +31,7 @@ export const authService = {
   },
 
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
+    localStorage.clear(); // Cambiamos a clear() para limpiar todo el localStorage
     setAuthCallback?.(false);
   }
 };

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { authService } from './services/auth.service';
 
 export const API_URL = "http://192.168.68.103:8000/api";
 
@@ -49,6 +50,12 @@ api.interceptors.response.use(
       message: error.response?.data?.message || error.message,
       url: error.config?.url
     });
+    
+    if (error.response?.status === 401) {
+      // Si recibimos un 401 (Unauthorized), limpiamos el localStorage y cerramos sesión
+      authService.logout();
+      window.location.href = '/login'; // Redirigimos al login
+    }
     
     if (error.response?.data instanceof Document) {
       throw new Error('Unable to connect to API. Please check your connection.');
