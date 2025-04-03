@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { authService } from "@/api/services/auth.service";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import Link from 'next/link';
 
 export default function LoginPage() {
   useAuthProtect();
@@ -28,9 +29,10 @@ export default function LoginPage() {
 
     try {
       const response = await authService.login(formData);
+      console.log({response})
       setAuth(true, response.user);
       router.push('/');
-      router.refresh(); // This will force a refresh of server components
+      router.refresh(); 
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to login');
     } finally {
@@ -66,6 +68,7 @@ export default function LoginPage() {
               required 
             />
           </div>
+          <Link className={styles.createAccount} href="/signup">Create an account</Link>
           {error && <span className={styles.errorText}>{error}</span>}
           <button type="submit" className={styles.submitButton} disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}

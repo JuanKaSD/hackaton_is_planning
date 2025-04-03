@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
+"use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AirlineProvider } from '@/contexts/AirlineContext';
+import { FlightProvider } from '@/contexts/FlightContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,11 +16,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Hackathon is planning",
-  description: "Your planning application",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,10 +25,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
-          <Navbar />
-          <main>
-            {children}
-          </main>
+          <AirlineProvider>
+            <FlightProvider>
+              <Navbar />
+              <main>
+                {children}
+              </main>
+            </FlightProvider>
+          </AirlineProvider>
         </AuthProvider>
       </body>
     </html>

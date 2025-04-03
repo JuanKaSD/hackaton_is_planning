@@ -108,3 +108,88 @@
   transform: translateY(0);
   box-shadow: 0 4px 8px rgba(2, 132, 199, 0.2);
 }
+
+.createAccount {
+  &:hover {
+    text-decoration: underline;
+    color: var(--primary);
+  }
+}
+
+.radioGroup {
+  width: 100%;
+}
+
+.radioOptions {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  justify-content: space-between;
+}
+
+.radioOption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: var(--background-primary);
+  border: 1px solid var(--border);
+}
+
+.radioOption input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.radioControl {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.radioControl:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  transition: transform 0.3s ease;
+}
+
+.radioOption input:checked ~ .radioControl:before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.radioOption.checked {
+  border-color: var(--primary);
+  background: var(--background-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+}
+
+.radioLabel {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.radioOption:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.radioOption:active {
+  transform: translateY(0);
+}

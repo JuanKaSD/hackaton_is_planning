@@ -5,17 +5,28 @@ import { useState, useEffect } from "react";
 import { authService } from "@/api/services/auth.service";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import Link from 'next/link';
+
+interface SignupFormData {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  user_type: 'client' | 'enterprise';
+}
 
 export default function SignupPage() {
   useAuthProtect();
   const router = useRouter();
   const { setAuth } = useAuth();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SignupFormData>({
     name: '',
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    user_type: 'client'
   });
   
   const [passwordError, setPasswordError] = useState('');
@@ -51,16 +62,19 @@ export default function SignupPage() {
     setLoading(true);
     
     try {
-      const response = await authService.signup({
+      const signupData = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
-        password_confirmation: formData.confirmPassword
-      });
+        password_confirmation: formData.confirmPassword,
+        user_type: formData.user_type
+      };
+
+      const response = await authService.signup(signupData);
       setAuth(true, response.user);
       router.push('/');
-      router.refresh(); // This will force a refresh of server components
+      router.refresh();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create account');
     } finally {
@@ -74,6 +88,33 @@ export default function SignupPage() {
         <h1>Create Account</h1>
         <p className={styles.subtitle}>Start your journey with us today</p>
         <form className={styles.form} onSubmit={handleSubmit}>
+          <div className={styles.radioGroup}>
+            <div className={styles.radioLabel}>Account Type</div>
+            <div className={styles.radioOptions}>
+              <label className={`${styles.radioOption} ${formData.user_type === 'client' ? styles.checked : ''}`}>
+                <input
+                  type="radio"
+                  name="user_type"
+                  value="client"
+                  checked={formData.user_type === 'client'}
+                  onChange={(e) => setFormData({...formData, user_type: e.target.value})}
+                />
+                <span className={styles.radioControl}></span>
+                <span className={styles.radioLabel}>Client</span>
+              </label>
+              <label className={`${styles.radioOption} ${formData.user_type === 'enterprise' ? styles.checked : ''}`}>
+                <input
+                  type="radio"
+                  name="user_type"
+                  value="enterprise"
+                  checked={formData.user_type === 'enterprise'}
+                  onChange={(e) => setFormData({...formData, user_type: e.target.value})}
+                />
+                <span className={styles.radioControl}></span>
+                <span className={styles.radioLabel}>Enterprise</span>
+              </label>
+            </div>
+          </div>
           <div className={styles.inputGroup}>
             <label htmlFor="name">Full Name</label>
             <input 
@@ -134,6 +175,7 @@ export default function SignupPage() {
             />
           </div>
           {error && <span className={styles.errorText}>{error}</span>}
+          <Link className={styles.createAccount} href="/login">Already got an account?</Link>
           <button type="submit" className={styles.submitButton} disabled={loading}>
             {loading ? 'Creating Account...' : 'Create Account'}
           </button>

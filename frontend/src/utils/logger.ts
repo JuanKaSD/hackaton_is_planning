@@ -1,6 +1,5 @@
 import debug from 'debug';
 
-// Enable debugging in development
 if (process.env.NODE_ENV === 'development') {
   debug.enable('auth:* api:* app:*');
 }

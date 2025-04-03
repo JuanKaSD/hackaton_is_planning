@@ -1,15 +1,15 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from 'react';
 import api from '@/api/axios';
+import { User } from '@/interfaces/auth';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   setAuth: (value: boolean, userData?: any) => void;
   updateUser: (userData: { [key: string]: string }) => Promise<any>;
   deleteAccount: () => Promise<void>;
-  user: any;
+  user: User | null;
   updateUserField: (field: string, value: string) => Promise<void>;
-  updatePassword: (currentPassword: string, newPassword: string) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -19,7 +19,6 @@ const AuthContext = createContext<AuthContextType>({
   deleteAccount: async () => {},
   user: null,
   updateUserField: async () => {},
-  updatePassword: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -38,11 +37,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const userId = localStorage.getItem('userId');
       const response = await api.get(`/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'ngrok-skip-browser-warning': 'true'
+        }
       });
-      setUser(response.data);
+      
+      // Add check to ensure response data is valid
+      if (typeof response.data === 'object' && !Array.isArray(response.data)) {
+        console.log('User profile fetched successfully:', response.data);
+        setUser(response.data);
+      } else {
+        console.error('Invalid user data received:', response.data);
+        setUser(null);
+      }
     } catch (error) {
       console.error('Error fetching user profile:', error);
+      setUser(null);
     }
   };
 
@@ -98,20 +109,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updatePassword = async (currentPassword: string, newPassword: string) => {
-    try {
-      const userId = localStorage.getItem('userId');
-      const response = await api.post(`/users/${userId}/password`, {
-        current_password: currentPassword,
-        new_password: newPassword
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error updating password:', error);
-      throw error;
-    }
-  };
-
   const deleteAccount = async () => {
     try {
       const userId = localStorage.getItem('userId');
@@ -133,8 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       updateUser, 
       deleteAccount,
       user,
-      updateUserField,
-      updatePassword,
+      updateUserField
     }}>
       {children}
     </AuthContext.Provider>

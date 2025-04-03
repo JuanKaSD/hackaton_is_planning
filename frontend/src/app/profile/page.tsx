@@ -6,18 +6,12 @@ import styles from './profile.module.css';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, updateUserField, updatePassword, deleteAccount } = useAuth();
+  const { user, updateUserField, deleteAccount } = useAuth();
   const [editingField, setEditingField] = useState<string | null>(null);
   const [fieldValues, setFieldValues] = useState({
     name: '',
     email: '',
     phone: ''
-  });
-
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
   });
 
   const [error, setError] = useState('');
@@ -56,29 +50,6 @@ export default function ProfilePage() {
       const errorMessage = err.response?.data?.message || `Error updating ${field}`;
       setError(errorMessage);
       console.error(`Error updating ${field}:`, err);
-    }
-  };
-
-  const handlePasswordUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccessMessage('');
-    
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setError("Passwords don't match");
-      return;
-    }
-
-    try {
-      await updatePassword(passwordData.currentPassword, passwordData.newPassword);
-      setSuccessMessage('Password updated successfully!');
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      });
-    } catch (err) {
-      setError('Error updating password');
     }
   };
 
@@ -151,48 +122,6 @@ export default function ProfilePage() {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>Change Password</h2>
-        <form onSubmit={handlePasswordUpdate} className={styles.form}>
-          <div className={styles.formGroup}>
-            <label htmlFor="currentPassword">Current Password</label>
-            <input
-              type="password"
-              id="currentPassword"
-              value={passwordData.currentPassword}
-              onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="newPassword">New Password</label>
-            <input
-              type="password"
-              id="newPassword"
-              value={passwordData.newPassword}
-              onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="confirmPassword">Confirm New Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={passwordData.confirmPassword}
-              onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-              required
-            />
-          </div>
-
-          <button type="submit" className={styles.submitButton}>
-            Update Password
-          </button>
-        </form>
       </div>
 
       <div className={styles.dangerZone}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { MenuIcon } from 'lucide-react';
+import { LogOutIcon, MenuIcon } from 'lucide-react';
 import Link from "next/link";
 import styles from "@/styles/Navbar.module.css";
 import { usePathname, useRouter } from "next/navigation";
@@ -11,7 +11,7 @@ import { useState, useEffect, useRef } from "react";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAuthenticated, setAuth } = useAuth();
+  const { isAuthenticated, setAuth, user } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -37,6 +37,8 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownOpen]);
+
+  console.log("User data in Navbar:", user);
 
   return (
     <nav className={styles.navbar}>
@@ -66,15 +68,22 @@ export default function Navbar() {
             </div>
           ) : (
             <>
+              {user && <span>Welcome {user.name}</span>}
+              {user?.user_type === 'enterprise' && (
+                <Link
+                  href="/dashboard"
+                  className={pathname === '/dashboard' ? styles.active : ''}
+                >
+                  Dashboard
+                </Link>
+              )}
               <Link
                 href="/profile"
                 className={pathname === '/profile' ? styles.active : ''}
               >
                 Profile
               </Link>
-              <button onClick={handleLogout} className={styles.logoutButton}>
-                Logout
-              </button>
+              <LogOutIcon onClick={handleLogout} className={styles.logoutButton} />
             </>
           )}
         </div>
