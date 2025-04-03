@@ -190,9 +190,38 @@
   border-radius: 16px;
   width: 90%;
   max-width: 550px;
+  max-height: 90vh; /* Altura máxima del 90% de la ventana */
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   animation: slideIn 0.3s ease-out;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-y: auto; /* Añadir scroll vertical */
+}
+
+.modalContent form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto; /* Permitir scroll en el formulario */
+  padding-right: 0.5rem; /* Espacio para la barra de scroll */
+}
+
+/* Estilizar la barra de scroll */
+.modalContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modalContent::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+  border-radius: 8px;
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+}
+
+.modalContent::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
 .modalContent h3 {
@@ -332,4 +361,30 @@
 
 .deleteButton {
   background: #e25c5c !important;
+}
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.editButton {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.deleteButton {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.itemContent {
+  flex: 1;
 }

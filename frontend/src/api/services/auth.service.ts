@@ -30,8 +30,16 @@ export const authService = {
     return response.data;
   },
 
-  logout() {
-    localStorage.clear(); // Cambiamos a clear() para limpiar todo el localStorage
-    setAuthCallback?.(false);
+  async logout() {
+    try {
+      // Llamar al endpoint de logout antes de limpiar
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
+      // Siempre limpiar localStorage y actualizar estado aunque falle la llamada
+      localStorage.clear();
+      setAuthCallback?.(false);
+    }
   }
 };
