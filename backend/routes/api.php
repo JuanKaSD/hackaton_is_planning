@@ -40,7 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::post('bookings', [BookingController::class, 'store'])->name('bookings.store');
     Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
-    Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 
     // Flight Routes
     Route::get('flights', [FlightController::class, 'index'])->name('flights.index');
