@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('airlines', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->foreignId('enterprise_id')->constrained('users');
             $table->timestamps();
         });
