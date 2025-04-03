@@ -27,7 +27,7 @@ class FlightController extends Controller
      */
     public function index(): JsonResponse
     {
-        $flights = Flight::with(['airline:id,name', 'originAirport', 'destinationAirport', 'airplane', 'duration', 'flight_date'])
+        $flights = Flight::with(['airline:id,name', 'originAirport', 'destinationAirport', 'airplane', 'duration', 'flight_date', 'state'])
             ->get();
 
         // Determine state for each flight
@@ -90,10 +90,7 @@ class FlightController extends Controller
      */
     public function show(Flight $flight): JsonResponse
     {
-        $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'airplane', 'duration', 'flight_date']);
-        
-        // Determine flight state
-        $flight->state = $this->determineFlightState($flight);
+        $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'airplane', 'duration', 'flight_date', 'state']);
         
         return response()->json($flight);
     }
@@ -170,24 +167,6 @@ class FlightController extends Controller
                 'message' => 'Failed to delete flight',
                 'error' => $e->getMessage()
             ], 500);
-        }
-    }
-
-    /**
-     * Determine the flight state based on current time, flight date and duration.
-     */
-    private function determineFlightState(Flight $flight): string
-    {
-        $now = Carbon::now();
-        $flightDate = Carbon::parse($flight->flight_date);
-        $flightEndDate = (clone $flightDate)->addMinutes($flight->duration);
-
-        if ($now->lt($flightDate)) {
-            return "preparing the aircraft";
-        } elseif ($now->gte($flightDate) && $now->lte($flightEndDate)) {
-            return "flying";
-        } else {
-            return "outdated";
         }
     }
 }

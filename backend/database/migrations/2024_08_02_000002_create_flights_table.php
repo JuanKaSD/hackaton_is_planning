@@ -16,15 +16,13 @@ return new class extends Migration
             $table->foreignId('airline_id')->constrained('airlines');
             $table->string('origin', 3);
             $table->string('destination', 3);
-            $table->string('airplane_plate');
             $table->integer('duration'); // Duration in minutes
             $table->dateTime('flight_date');
-            $table->string('state');
+            $table->boolean('state')->default(false); // 0: Scheduled, 1: Completed
             $table->timestamps();
             
             $table->foreign('origin')->references('id')->on('airports');
             $table->foreign('destination')->references('id')->on('airports');
-            $table->foreign('airplane_plate')->references('plate')->on('airplanes');
         });
     }
 
