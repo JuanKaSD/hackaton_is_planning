@@ -66,11 +66,9 @@ class FlightController extends Controller
             }
 
             $flight = Flight::create($validated);
-            $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date']);
 
             return response()->json([
                 'message' => 'Flight created successfully',
-                'data' => $flight
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
