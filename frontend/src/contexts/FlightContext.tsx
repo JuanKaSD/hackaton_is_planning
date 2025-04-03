@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import api from '../api/axios';
 
 interface Airport {
@@ -57,10 +58,13 @@ export function FlightProvider({ children }: { children: ReactNode }) {
   const [airlinesWithFlights, setAirlinesWithFlights] = useState<AirlineWithFlights[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    fetchFlights();
-  }, []);
+    if (pathname?.startsWith('/dashboard')) {
+      fetchFlights();
+    }
+  }, [pathname]);
 
   const fetchFlights = async () => {
     setLoading(true);

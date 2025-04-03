@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import api from '@/api/axios';
 
 interface Airline {
@@ -22,10 +23,13 @@ export function AirlineProvider({ children }: { children: React.ReactNode }) {
   const [airlines, setAirlines] = useState<Airline[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    fetchAirlines();
-  }, []);
+    if (pathname?.startsWith('/dashboard')) {
+      fetchAirlines();
+    }
+  }, [pathname]);
 
   // Removemos getAuthHeader() ya que el interceptor de Axios ya maneja esto
   
