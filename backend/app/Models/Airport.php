@@ -41,20 +41,4 @@ class Airport extends Model
         'name',
         'country',
     ];
-
-    /**
-     * Get the departing flights from this airport.
-     */
-    public function departingFlights(): HasMany
-    {
-        return $this->hasMany(Flight::class, 'origin', 'id');
-    }
-
-    /**
-     * Get the arriving flights to this airport.
-     */
-    public function arrivingFlights(): HasMany
-    {
-        return $this->hasMany(Flight::class, 'destination', 'id');
-    }
 }
