@@ -15,6 +15,7 @@ interface AirlineContextType {
   deleteAirline: (id: string) => Promise<void>;
   loading: boolean;
   error: string | null;
+  fetchAirlines: () => Promise<void>;
 }
 
 const AirlineContext = createContext<AirlineContextType>({} as AirlineContextType);
@@ -31,8 +32,6 @@ export function AirlineProvider({ children }: { children: React.ReactNode }) {
     }
   }, [pathname]);
 
-  // Removemos getAuthHeader() ya que el interceptor de Axios ya maneja esto
-  
   const fetchAirlines = async () => {
     setLoading(true);
     try {
@@ -70,8 +69,9 @@ export function AirlineProvider({ children }: { children: React.ReactNode }) {
 
   const updateAirline = async (id: string, data: { name: string }) => {
     try {
-      const response = await api.put(`/airlines/${id}`, data);
-      setAirlines(airlines.map(a => a.id === id ? response.data : a));
+      await api.put(`/airlines/${id}`, data);
+      // Refresh airlines list after update instead of updating state directly
+      await fetchAirlines();
     } catch (err) {
       setError('Failed to update airline');
       throw err;
@@ -95,7 +95,8 @@ export function AirlineProvider({ children }: { children: React.ReactNode }) {
       updateAirline, 
       deleteAirline,
       loading,
-      error 
+      error,
+      fetchAirlines
     }}>
       {children}
     </AirlineContext.Provider>

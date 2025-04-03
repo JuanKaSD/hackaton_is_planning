@@ -6,12 +6,12 @@ import { EditAirlineModal } from '@/components/EditAirlineModal';
 import styles from '@/styles/Tabs.module.css';
 
 interface Airline {
-  id: number;
+  id: string; // Changed from number to string to match AirlineContext
   name: string;
 }
 
 export function AirlineTab() {
-  const { airlines, addAirline, updateAirline, deleteAirline, loading } = useAirlines();
+  const { airlines, addAirline, updateAirline, deleteAirline, loading, fetchAirlines } = useAirlines();
   const [name, setName] = useState('');
   const [editingAirline, setEditingAirline] = useState<Airline | null>(null);
 
@@ -21,7 +21,7 @@ export function AirlineTab() {
     setName('');
   };
 
-  const handleUpdate = async (id: number, data: { name: string }) => {
+  const handleUpdate = async (id: string, data: { name: string }) => { // Changed from number to string
     try {
       await updateAirline(id, data);
       setEditingAirline(null);

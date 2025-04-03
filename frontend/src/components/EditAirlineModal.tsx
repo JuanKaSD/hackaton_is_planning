@@ -2,14 +2,14 @@ import { useState } from 'react';
 import styles from '../styles/Modal.module.css';
 
 interface Airline {
-  id: number;
+  id: string; // Changed from number to string to match AirlineContext
   name: string;
 }
 
 interface EditAirlineModalProps {
   airline: Airline;
   onClose: () => void;
-  onSave: (id: number, data: { name: string }) => Promise<void>;
+  onSave: (id: string, data: { name: string }) => Promise<void>; // Changed from number to string
 }
 
 export function EditAirlineModal({ airline, onClose, onSave }: EditAirlineModalProps) {
