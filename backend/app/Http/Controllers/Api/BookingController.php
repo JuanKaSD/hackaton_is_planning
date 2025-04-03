@@ -77,15 +77,6 @@ class BookingController extends Controller
                 ], 400);
             }
 
-            // Check if the client has overlapping flights
-            $overlappingFlight = $this->hasOverlappingFlights($user->id, $flight);
-            if ($overlappingFlight) {
-                return response()->json([
-                    'message' => 'You already have a booking for a flight that overlaps with this one',
-                    'overlapping_flight' => $overlappingFlight
-                ], 400);
-            }
-
             // Check if flight has available seats
             if (!$flight->hasAvailableSeats()) {
                 return response()->json([
@@ -134,51 +125,6 @@ class BookingController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    /**
-     * Check if a user has any flights that overlap with the new flight.
-     *
-     * @param int $userId The user ID
-     * @param Flight $newFlight The new flight to check against
-     * @return mixed The overlapping flight or false if no overlap
-     */
-    private function hasOverlappingFlights(int $userId, Flight $newFlight)
-    {
-        // Get all user's confirmed/pending bookings
-        $userBookings = Booking::where('user_id', $userId)
-            ->whereIn('status', ['confirmed', 'pending'])
-            ->with('flight')
-            ->get();
-        
-        if ($userBookings->isEmpty()) {
-            return false;
-        }
-        
-        // New flight start and end times
-        $newFlightStart = Carbon::parse($newFlight->flight_date);
-        $newFlightEnd = (clone $newFlightStart)->addMinutes($newFlight->duration);
-        
-        foreach ($userBookings as $booking) {
-            $existingFlight = $booking->flight;
-            $existingFlightStart = Carbon::parse($existingFlight->flight_date);
-            $existingFlightEnd = (clone $existingFlightStart)->addMinutes($existingFlight->duration);
-            
-            // Check if flights overlap using time interval logic
-            if (
-                // New flight starts during existing flight
-                ($newFlightStart->betweenIncluded($existingFlightStart, $existingFlightEnd)) ||
-                // New flight ends during existing flight
-                ($newFlightEnd->betweenIncluded($existingFlightStart, $existingFlightEnd)) ||
-                // New flight completely contains existing flight
-                ($newFlightStart->lessThanOrEqualTo($existingFlightStart) && 
-                 $newFlightEnd->greaterThanOrEqualTo($existingFlightEnd))
-            ) {
-                return $existingFlight;
-            }
-        }
-        
-        return false;
     }
 
     /**
