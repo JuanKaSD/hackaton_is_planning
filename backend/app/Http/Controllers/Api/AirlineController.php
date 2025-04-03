@@ -53,9 +53,6 @@ class AirlineController extends Controller
             
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
-                'code' => 'nullable|string|max:10',
-                'logo' => 'nullable|string|max:255',
-                'description' => 'nullable|string',
             ]);
             
             // Automatically set the enterprise_id to the current user's id
@@ -101,9 +98,6 @@ class AirlineController extends Controller
             
             $validated = $request->validate([
                 'name' => 'sometimes|required|string|max:255',
-                'code' => 'nullable|string|max:10',
-                'logo' => 'nullable|string|max:255',
-                'description' => 'nullable|string',
             ]);
             
             $airline->update($validated);

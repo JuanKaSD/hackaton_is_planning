@@ -1,19 +1,34 @@
+"use client";
+
+import { useAuth } from '@/contexts/AuthContext';
 import styles from '@/styles/Home.module.css';
 import Link from 'next/link';
 
 export default function HomePage() {
+  const { isAuthenticated } = useAuth();
+  
   return (
     <div className={styles.container}>
       <section className={styles.hero}>
         <h1>Find Your Next Adventure</h1>
         <p>Your one-stop platform for finding and booking the best flight deals worldwide</p>
         <div className={styles.actions}>
-          <Link href="/login" className={styles.primaryButton}>
-            Start Exploring
-          </Link>
-          <Link href="/signup" className={styles.secondaryButton}>
-            Join Us
-          </Link>
+          {
+            isAuthenticated ? (
+              <Link href="/flights" className={styles.primaryButton}>
+                Let's Booking
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className={styles.primaryButton}>
+                  Start Exploring
+                </Link>
+                <Link href="/signup" className={styles.secondaryButton}>
+                  Join Us
+                </Link>
+              </>
+            )
+          }
         </div>
       </section>
       <section className={styles.features}>
