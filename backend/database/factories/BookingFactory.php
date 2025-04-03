@@ -17,7 +17,7 @@ class BookingFactory extends Factory
     protected $model = Booking::class;
 
     /**
-     * Define the model's default state.
+     * Define the model's default status.
      *
      * @return array
      */
@@ -37,7 +37,7 @@ class BookingFactory extends Factory
      */
     public function confirmed(): Factory
     {
-        return $this->state(function (array $attributes) {
+        return $this->status(function (array $attributes) {
             return [
                 'status' => 'confirmed',
             ];
@@ -49,7 +49,7 @@ class BookingFactory extends Factory
      */
     public function cancelled(): Factory
     {
-        return $this->state(function (array $attributes) {
+        return $this->status(function (array $attributes) {
             return [
                 'status' => 'cancelled',
             ];
@@ -61,7 +61,7 @@ class BookingFactory extends Factory
      */
     public function pending(): Factory
     {
-        return $this->state(function (array $attributes) {
+        return $this->status(function (array $attributes) {
             return [
                 'status' => 'pending',
             ];

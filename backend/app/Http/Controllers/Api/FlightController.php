@@ -27,12 +27,12 @@ class FlightController extends Controller
      */
     public function index(): JsonResponse
     {
-        $flights = Flight::with(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date', 'state'])
+        $flights = Flight::with(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date', 'status'])
             ->get();
 
-        // Determine state for each flight
+        // Determine status for each flight
         $flights->each(function ($flight) {
-            $flight->state = $this->determineFlightState($flight);
+            $flight->status = $this->determineFlightstatus($flight);
         });
 
         return response()->json($flights);
@@ -90,7 +90,7 @@ class FlightController extends Controller
      */
     public function show(Flight $flight): JsonResponse
     {
-        $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date', 'state']);
+        $flight->load(['airline:id,name', 'originAirport', 'destinationAirport', 'duration', 'flight_date', 'status']);
         
         return response()->json($flight);
     }

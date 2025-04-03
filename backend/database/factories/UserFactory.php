@@ -17,7 +17,7 @@ class UserFactory extends Factory
     protected static ?string $password;
 
     /**
-     * Define the model's default state.
+     * Define the model's default status.
      *
      * @return array<string, mixed>
      */
@@ -38,7 +38,7 @@ class UserFactory extends Factory
      */
     public function client(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->status(fn (array $attributes) => [
             'user_type' => 'client',
         ]);
     }
@@ -48,7 +48,7 @@ class UserFactory extends Factory
      */
     public function enterprise(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->status(fn (array $attributes) => [
             'user_type' => 'enterprise',
         ]);
     }

@@ -22,7 +22,7 @@ class Flight extends Model
         'destination',
         'duration',
         'flight_date',
-        'state',
+        'status',
         'passenger_capacity',
     ];
 
@@ -33,7 +33,7 @@ class Flight extends Model
      */
     protected $casts = [
         'flight_date' => 'datetime',
-        'state' => 'string',
+        'status' => 'string',
         'passenger_capacity' => 'integer',
     ];
 
