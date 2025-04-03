@@ -6,6 +6,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Api\AirportController;
 use App\Http\Controllers\Api\AirplaneController;
 use App\Http\Controllers\Api\FlightController;
+use App\Http\Controllers\Api\BookingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -38,6 +39,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Airport Routes
     Route::get('airports', [AirportController::class, 'index'])->name('airports.index');
+
+    // Booking Routes - Only for clients
+    Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::post('bookings', [BookingController::class, 'store'])->name('bookings.store');
+    Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 
     // Flight Routes
     Route::get('flights', [FlightController::class, 'index'])->name('flights.index');

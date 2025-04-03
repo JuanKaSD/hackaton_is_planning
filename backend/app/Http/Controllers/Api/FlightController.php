@@ -62,6 +62,7 @@ class FlightController extends Controller
                 'airplane_plate' => 'required|exists:airplanes,plate',
                 'duration' => 'required|integer|min:1',
                 'flight_date' => 'required|date|after:now',
+                'passenger_capacity' => 'integer|min:1', // Added validation for passenger capacity
             ]);
 
             $flight = Flight::create($validated);
@@ -117,6 +118,7 @@ class FlightController extends Controller
                 'airplane_plate' => 'sometimes|required|exists:airplanes,plate',
                 'duration' => 'sometimes|required|integer|min:1',
                 'flight_date' => 'sometimes|required|date|after:now',
+                'passenger_capacity' => 'integer|min:1', // Added validation for passenger capacity
             ]);
 
             $flight->update($validated);
