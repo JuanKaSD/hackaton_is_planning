@@ -5,7 +5,7 @@ import styles from '@/styles/Home.module.css';
 import Link from 'next/link';
 
 export default function HomePage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   
   return (
     <div className={styles.container}>
@@ -15,9 +15,15 @@ export default function HomePage() {
         <div className={styles.actions}>
           {
             isAuthenticated ? (
-              <Link href="/flights" className={styles.primaryButton}>
-                Let's Booking
-              </Link>
+              user?.user_type === 'enterprise' ? (
+                <Link href="/dashboard" className={styles.primaryButton}>
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <Link href="/flights" className={styles.primaryButton}>
+                  Let's Booking
+                </Link>
+              )
             ) : (
               <>
                 <Link href="/login" className={styles.primaryButton}>
