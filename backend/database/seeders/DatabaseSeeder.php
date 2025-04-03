@@ -15,16 +15,21 @@ class DatabaseSeeder extends Seeder
     {
         // Create a test client user
         User::factory()->create([
-            'name' => 'Test Client',
+            'name' => 'client',
             'email' => 'client@example.com',
             'user_type' => 'client',
         ]);
         
         // Create a test enterprise user
         User::factory()->create([
-            'name' => 'Test Enterprise',
+            'name' => 'enterprise',
             'email' => 'enterprise@example.com',
             'user_type' => 'enterprise',
+        ]);
+        
+        // Seed airports
+        $this->call([
+            AirportSeeder::class,
         ]);
     }
 }

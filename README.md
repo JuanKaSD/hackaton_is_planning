@@ -109,6 +109,36 @@ These routes require authentication (valid token):
 | PUT | `/api/airlines/{airline}` | `AirlineController@update` | Update an existing airline |
 | DELETE | `/api/airlines/{airline}` | `AirlineController@destroy` | Delete an airline |
 
+#### Airports
+
+| Method | Route | Controller | Description |
+|--------|------|------------|-------------|
+| GET | `/api/airports` | `AirportController@index` | List all airports |
+| GET | `/api/airports/{airport}` | `AirportController@show` | Get details of a specific airport |
+| POST | `/api/airports` | `AirportController@store` | Create a new airport |
+| PUT | `/api/airports/{airport}` | `AirportController@update` | Update an existing airport |
+| DELETE | `/api/airports/{airport}` | `AirportController@destroy` | Delete an airport |
+
+#### Airplanes
+
+| Method | Route | Controller | Description |
+|--------|------|------------|-------------|
+| GET | `/api/airplanes` | `AirplaneController@index` | List all airplanes |
+| GET | `/api/airplanes/{airplane}` | `AirplaneController@show` | Get details of a specific airplane |
+| POST | `/api/airplanes` | `AirplaneController@store` | Create a new airplane |
+| PUT | `/api/airplanes/{airplane}` | `AirplaneController@update` | Update an existing airplane |
+| DELETE | `/api/airplanes/{airplane}` | `AirplaneController@destroy` | Delete an airplane |
+
+#### Flights
+
+| Method | Route | Controller | Description |
+|--------|------|------------|-------------|
+| GET | `/api/flights` | `FlightController@index` | List all flights |
+| GET | `/api/flights/{flight}` | `FlightController@show` | Get details of a specific flight |
+| POST | `/api/flights` | `FlightController@store` | Create a new flight |
+| PUT | `/api/flights/{flight}` | `FlightController@update` | Update an existing flight |
+| DELETE | `/api/flights/{flight}` | `FlightController@destroy` | Delete a flight |
+
 ### Enterprise Routes
 
 These routes require authentication and the `enterprise` middleware:

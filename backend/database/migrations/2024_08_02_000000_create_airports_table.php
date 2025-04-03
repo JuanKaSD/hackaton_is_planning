@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('airlines', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->foreignId('enterprise_id')->constrained('users');
+        Schema::create('airports', function (Blueprint $table) {
+            $table->string('id', 3)->primary(); // 3-letter code (e.g., LPA, TNF, BCN)
+            $table->string('name');
+            $table->string('country');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('airlines');
+        Schema::dropIfExists('airports');
     }
 };

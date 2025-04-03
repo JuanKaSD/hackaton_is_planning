@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\User
@@ -52,7 +53,6 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -74,5 +74,28 @@ class User extends Authenticatable
     public function isEnterprise(): bool
     {
         return $this->user_type === 'enterprise';
+    }
+
+    /**
+     * Get all bookings for the user.
+     */
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * Get flights booked by this user through bookings.
+     */
+    public function flights()
+    {
+        return $this->hasManyThrough(
+            Flight::class, 
+            Booking::class,
+            'user_id', // Foreign key on bookings table
+            'id',      // Foreign key on flights table
+            'id',      // Local key on users table
+            'flight_id' // Local key on bookings table
+        );
     }
 }
