@@ -65,9 +65,17 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <button onClick={handleLogout} className={styles.logoutButton}>
-              Logout
-            </button>
+            <>
+              <Link
+                href="/profile"
+                className={pathname === '/profile' ? styles.active : ''}
+              >
+                Profile
+              </Link>
+              <button onClick={handleLogout} className={styles.logoutButton}>
+                Logout
+              </button>
+            </>
           )}
         </div>
       </div>

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IS Planning",
+  title: "Hackathon is planning",
   description: "Your planning application",
 };
 
