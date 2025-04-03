@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('airlines', [AirlineController::class, 'store'])->name('airlines.store');
         Route::put('airlines/{airline}', [AirlineController::class, 'update'])->name('airlines.update');
         Route::delete('airlines/{airline}', [AirlineController::class, 'destroy'])->name('airlines.destroy');
+        Route::get('enterprise/flights', [AirlineController::class, 'getEnterpriseFlights'])->name('enterprise.flights');
 
         // Flight Routes
         Route::get('flights/{flight}', [FlightController::class, 'show'])->name('flights.show');

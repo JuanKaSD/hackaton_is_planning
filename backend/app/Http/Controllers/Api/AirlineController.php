@@ -136,4 +136,31 @@ class AirlineController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get all flights for the airlines owned by the authenticated enterprise user.
+     */
+    public function getEnterpriseFlights(): JsonResponse
+    {
+        try {
+            // Get the authenticated user
+            $user = Auth::user();
+            
+            // Get all airlines owned by this user with their flights
+            $airlines = Airline::where('enterprise_id', $user->id)
+                ->select('id', 'name')
+                ->with(['flights' => function($query) {
+                    $query->with(['originAirport', 'destinationAirport']);
+                }])
+                ->get();
+            
+            return response()->json($airlines);
+        } catch (\Exception $e) {
+            Log::error('Error fetching enterprise flights: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to fetch enterprise flights',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
