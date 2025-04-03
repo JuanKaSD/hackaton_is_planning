@@ -54,7 +54,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Si recibimos un 401 (Unauthorized), limpiamos el localStorage y cerramos sesión
       authService.logout();
-      window.location.href = '/login'; // Redirigimos al login
+      window.location.href = '/'; // Cambiado de '/login' a '/'
     }
     
     if (error.response?.data instanceof Document) {
