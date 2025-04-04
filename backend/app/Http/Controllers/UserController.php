@@ -23,31 +23,36 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
             ]);
+
+            $user = User::where('email', $request->email)->first();
+
+            if (! $user || ! Hash::check($request->password, $user->password)) {
+                throw ValidationException::withMessages([
+                    'email' => ['The provided credentials are incorrect.'],
+                ]);
+            }
+
+            // Create a new token
+            $token = $user->createToken('auth-token')->plainTextToken;
+            
+            // Calculate token expiration time
+            $expirationTime = now()->addMinutes(config('sanctum.expiration', 10));
+
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+                'token_expires_at' => $expirationTime->toDateTimeString(),
+                'token_valid_for' => '10 minutes'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Login error: ' . $e->getMessage(), ['email' => $request->email]);
+            throw $e;
         }
-
-        // Create a new token
-        $token = $user->createToken('auth-token')->plainTextToken;
-        
-        // Calculate token expiration time
-        $expirationTime = now()->addMinutes(config('sanctum.expiration', 10));
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-            'token_expires_at' => $expirationTime->toDateTimeString(),
-            'token_valid_for' => '10 minutes'
-        ]);
     }
 
     /**
@@ -55,39 +60,44 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'user_type' => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
-            'phone' => 'nullable|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'user_type' => 'required|string',
+                'password' => 'required|string|min:8|confirmed',
+                'phone' => 'nullable|string|max:255',
+            ]);
 
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'user_type' => $validated['user_type'],
-            'password' => Hash::make($validated['password']),
-            'phone' => $validated['phone'] ?? '', // Provide default empty string
-        ]);
+            User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'user_type' => $validated['user_type'],
+                'password' => Hash::make($validated['password']),
+                'phone' => $validated['phone'] ?? '', // Provide default empty string
+            ]);
 
-        $user = User::where('email', $validated['email'])->first();
+            $user = User::where('email', $validated['email'])->first();
 
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+
+            $token = $user->createToken('auth-token')->plainTextToken;
+            
+            // Calculate token expiration time
+            $expirationTime = now()->addMinutes(config('sanctum.expiration', 10));
+
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+                'token_expires_at' => $expirationTime->toDateTimeString(),
+                'token_valid_for' => '10 minutes'
+            ], 201);
+        } catch (\Exception $e) {
+            Log::error('Registration error: ' . $e->getMessage(), ['email' => $request->email ?? null]);
+            throw $e;
         }
-
-        $token = $user->createToken('auth-token')->plainTextToken;
-         
-        // Calculate token expiration time
-        $expirationTime = now()->addMinutes(config('sanctum.expiration', 10));
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-            'token_expires_at' => $expirationTime->toDateTimeString(),
-            'token_valid_for' => '10 minutes'
-        ], 201);
     }
 
     /**
