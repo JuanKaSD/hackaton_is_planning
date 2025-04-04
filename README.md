@@ -225,3 +225,216 @@ php artisan test
 ```
 
 For more information, see the [Laravel documentation](https://laravel.com/docs) and [Laravel Sanctum](https://laravel.com/docs/sanctum).
+
+# Frontend Application
+
+The frontend is built with Next.js and provides a modern user interface for interacting with the API.
+
+## Getting Started
+
+1. Navigate to the frontend directory:
+
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:3000`.
+
+## Pages
+
+### Public Pages
+- `/` - Home page with features overview and authentication options
+- `/login` - User login page
+- `/signup` - User registration page with account type selection
+
+### Protected Pages
+- `/dashboard` - Enterprise management dashboard (enterprise users only)
+- `/profile` - User profile management
+- `/flights` - Flight booking interface (regular users)
+
+## Components
+
+### Layout Components
+- `Navbar` - Main navigation component with dynamic user menu
+- `DashboardTabs` - Tab system for enterprise dashboard
+
+### Form Components
+- `Dropdown` - Reusable dropdown with search functionality
+- `EditAirlineModal` - Modal for editing airline details
+
+### Dashboard Components
+- `AirlineTab` - Airline management interface
+- `FlightTab` - Flight management interface with CRUD operations
+
+## Contexts
+
+### Authentication
+- `AuthContext` - Manages user authentication state and operations
+- Methods:
+  - `login()`
+  - `signup()`
+  - `logout()`
+  - `updateUser()`
+
+### Data Management
+- `AirlineContext` - Airline data management
+- `FlightContext` - Flight operations and state
+- `AirportContext` - Airport data and operations
+
+## Styles
+
+### Global Styles
+- Color scheme with light/dark mode support
+- Responsive layout system
+- Typography using Geist font family
+
+### Module Styles
+- `Auth.module.css` - Authentication forms styling
+- `Dashboard.module.css` - Dashboard layout and components
+- `Navbar.module.css` - Navigation styling
+- `Modal.module.css` - Modal components
+- `Tabs.module.css` - Tab system styling
+- `Dropdown.module.css` - Custom dropdown component
+
+## Theme Variables
+
+```css
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --primary: #0284c7;
+  --primary-dark: #0369a1;
+  --secondary: #64748b;
+  --accent: #0ea5e9;
+  --border: #e2e8f0;
+  --card-bg: #ffffff;
+  --error: #ef4444;
+  --navbar-height: 60px;
+}
+```
+
+## API Integration
+
+### Services
+- `auth.service.ts` - Authentication API calls
+- `airline.service.ts` - Airline management endpoints
+- `flight.service.ts` - Flight operations
+- `airport.service.ts` - Airport data fetching
+
+### Axios Configuration
+- Base URL configuration
+- Token management
+- Request/Response interceptors
+- Error handling
+
+## Type Definitions
+
+### User Types
+```typescript
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  user_type: 'client' | 'enterprise';
+}
+```
+
+### Data Models
+```typescript
+interface Flight {
+  id: number;
+  airline_id: number;
+  origin: string;
+  destination: string;
+  duration: number;
+  flight_date: string;
+  status: string;
+  passenger_capacity: number;
+}
+
+interface Airline {
+  id: string;
+  name: string;
+}
+
+interface Airport {
+  id: string;
+  name: string;
+  country: string;
+}
+```
+
+## Development Tools
+
+- TypeScript for type safety
+- ESLint for code quality
+- CSS Modules for scoped styling
+- Next.js App Router
+- Lucide React for icons
+
+## Best Practices
+
+1. Component Structure:
+   - Functional components with TypeScript
+   - Props interface definitions
+   - Custom hooks for logic separation
+
+2. State Management:
+   - Context API for global state
+   - Local state for component-specific data
+   - Optimized re-renders
+
+3. Error Handling:
+   - Form validation
+   - API error management
+   - User feedback
+
+4. Styling:
+   - CSS Modules for component isolation
+   - CSS Variables for theme consistency
+   - Mobile-first responsive design
+
+## Features
+
+- User authentication (login/signup)
+- Enterprise dashboard for managing airlines and flights
+- Responsive design
+- Real-time form validation
+- Dark mode support
+
+## Project Structure
+
+```
+frontend/
+├── src/
+│   ├── api/          # API configuration and services
+│   ├── app/          # Next.js app router pages
+│   ├── components/   # Reusable React components
+│   ├── contexts/     # React context providers
+│   ├── hooks/        # Custom React hooks
+│   ├── interfaces/   # TypeScript interfaces
+│   ├── styles/       # CSS modules and global styles
+│   └── utils/        # Utility functions and helpers
+├── public/           # Static files
+└── package.json      # Project dependencies and scripts
+```
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint for code quality
