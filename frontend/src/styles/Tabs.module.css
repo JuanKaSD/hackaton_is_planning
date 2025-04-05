@@ -1,5 +1,5 @@
 .tabTitle {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0; /* Remove bottom margin */
   color: var(--text-primary);
   font-size: 1.5rem;
 }
@@ -195,6 +195,7 @@
   animation: slideIn 0.3s ease-out;
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow-y: auto; /* Añadir scroll vertical */
+  margin: auto; /* Center the card within the modal */
 }
 
 .modalContent form {
@@ -504,4 +505,20 @@
   border-color: var(--primary);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.rowLayout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.centerVertical {
+  display: flex;
+  align-items: center;
+}
+
+.header {
+  margin-bottom: 1.5rem; /* Add bottom margin to the container */
 }

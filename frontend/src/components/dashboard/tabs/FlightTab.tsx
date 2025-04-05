@@ -5,6 +5,7 @@ import { useAirlines } from '../../../contexts/AirlineContext';
 import { useAirports } from '../../../contexts/AirportContext';
 import { Dropdown } from '../../Dropdown';
 import styles from '../../../styles/Tabs.module.css';
+import { Plane, Plus, X } from 'lucide-react'; // Añadir importaciones de iconos
 
 export function FlightTab() {
   const { flights, addFlight, updateFlight, deleteFlight, loading, fetchFlights } = useFlights();
@@ -12,6 +13,7 @@ export function FlightTab() {
   const { airports, loading: airportsLoading } = useAirports();
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false); // Nuevo estado para el modal de Add Flight
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [editFormData, setEditFormData] = useState({
     origin: '',
@@ -56,6 +58,7 @@ export function FlightTab() {
       passenger_capacity: '',
       airline_id: airlines[0]?.id || '' // Reset with the first airline if it exists
     });
+    setIsAddModalOpen(false); // Cerrar el modal después de enviar
     // Refresh flights list after adding a new flight
     await fetchFlights();
   };
@@ -139,68 +142,27 @@ export function FlightTab() {
   }
 
   return (
-    <div>
-      <h2 className={styles.tabTitle}>Manage Flights</h2>
+    <div className={styles.tabContainer}>
+      {/* Añadir encabezado con botón "Add Flight" */}
+      <div className={`${styles.header} ${styles.rowLayout}`}>
+        <h2 className={`${styles.tabTitle} ${styles.centerVertical}`}>
+          <Plane className={styles.titleIcon} />
+          Manage Flights
+        </h2>
+        <button 
+          onClick={() => setIsAddModalOpen(true)} 
+          className={styles.addButton}
+        >
+          <Plus size={20} />
+          Add Flight
+        </button>
+      </div>
+
       {loading || airportsLoading ? (
         <p>Loading...</p>
       ) : (
         <>
-          <form onSubmit={handleSubmit} className={styles.form}>
-            {renderAirlineSelector()}
-            <Dropdown
-              label="Origin Airport"
-              value={formData.origin}
-              onChange={(value) => setFormData({ ...formData, origin: value })}
-              options={airports.map((airport) => ({
-                value: airport.id,
-                label: airport.id
-              }))}
-              placeholder="Select Origin Airport"
-              required={true}
-            />
-            <Dropdown
-              label="Destination Airport"
-              value={formData.destination}
-              onChange={(value) => setFormData({ ...formData, destination: value })}
-              options={airports.map((airport) => ({
-                value: airport.id,
-                label: airport.id
-              }))}
-              placeholder="Select Destination Airport"
-              required={true}
-            />
-            <input
-              type="number"
-              placeholder="Duration (minutes)"
-              value={formData.duration}
-              onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-              required
-            />
-            <input
-              type="datetime-local"
-              placeholder="Flight Date"
-              value={formData.flight_date}
-              onChange={(e) => setFormData({ ...formData, flight_date: e.target.value })}
-              required
-            />
-            <input
-              type="number"
-              placeholder="Passenger Capacity"
-              value={formData.passenger_capacity}
-              onChange={(e) => setFormData({ ...formData, passenger_capacity: e.target.value })}
-              required
-            />
-            <Dropdown
-              label="Status"
-              value={formData.status}
-              onChange={(value) => setFormData({ ...formData, status: value })}
-              options={statusOptions}
-              placeholder="Select Status"
-              required={true}
-            />
-            <button type="submit">Add Flight</button>
-          </form>
-
+          {/* Lista de vuelos existente */}
           <div className={styles.list}>
             {Object.entries(groupedFlights).map(([airlineId, data]) => (
               <div key={airlineId} className={styles.airlineGroup}>
@@ -230,6 +192,84 @@ export function FlightTab() {
             ))}
           </div>
 
+          {/* Modal para añadir vuelo */}
+          {isAddModalOpen && (
+            <div className={styles.modal}>
+              <div className={styles.modalContent}>
+                <div className={`${styles.modalHeader} ${styles.rowLayout}`}>
+                  <h3 className={styles.centerVertical}>
+                    <Plus className={styles.modalIcon} />
+                    Add Flight
+                  </h3>
+                  <button onClick={() => setIsAddModalOpen(false)} className={styles.closeButton}>
+                    <X size={20} />
+                  </button>
+                </div>
+                <form onSubmit={handleSubmit} className={styles.form}>
+                  {renderAirlineSelector()}
+                  <Dropdown
+                    label="Origin Airport"
+                    value={formData.origin}
+                    onChange={(value) => setFormData({ ...formData, origin: value })}
+                    options={airports.map((airport) => ({
+                      value: airport.id,
+                      label: airport.id
+                    }))}
+                    placeholder="Select Origin Airport"
+                    required={true}
+                  />
+                  <Dropdown
+                    label="Destination Airport"
+                    value={formData.destination}
+                    onChange={(value) => setFormData({ ...formData, destination: value })}
+                    options={airports.map((airport) => ({
+                      value: airport.id,
+                      label: airport.id
+                    }))}
+                    placeholder="Select Destination Airport"
+                    required={true}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Duration (minutes)"
+                    value={formData.duration}
+                    onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                    required
+                  />
+                  <input
+                    type="datetime-local"
+                    placeholder="Flight Date"
+                    value={formData.flight_date}
+                    onChange={(e) => setFormData({ ...formData, flight_date: e.target.value })}
+                    required
+                  />
+                  <input
+                    type="number"
+                    placeholder="Passenger Capacity"
+                    value={formData.passenger_capacity}
+                    onChange={(e) => setFormData({ ...formData, passenger_capacity: e.target.value })}
+                    required
+                  />
+                  <Dropdown
+                    label="Status"
+                    value={formData.status}
+                    onChange={(value) => setFormData({ ...formData, status: value })}
+                    options={statusOptions}
+                    placeholder="Select Status"
+                    required={true}
+                  />
+                  <div className={styles.modalActions}>
+                    <button type="submit">Add Flight</button>
+                    <button type="button" onClick={() => setIsAddModalOpen(false)}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Modal de edición existente */}
           {isEditModalOpen && (
             <div className={styles.modal}>
               <div className={styles.modalContent}>
