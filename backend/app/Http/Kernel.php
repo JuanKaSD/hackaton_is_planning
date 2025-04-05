@@ -30,6 +30,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\CheckForExpiredToken::class,  // Añadido para verificar tokens expirados
+            \App\Http\Middleware\LogApiErrors::class, // Log API errors
         ],
     ];
 

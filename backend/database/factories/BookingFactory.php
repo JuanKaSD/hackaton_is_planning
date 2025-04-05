@@ -27,7 +27,7 @@ class BookingFactory extends Factory
             'user_id' => User::factory()->client(),
             'flight_id' => Flight::factory(),
             'status' => $this->faker->randomElement(['confirmed', 'cancelled', 'pending']),
-            'booking_reference' => Booking::generateBookingReference(),
+            'booking_reference' => Booking::generateBookingReference($this->faker->uuid), // Pass the required argument
             'seat_number' => $this->faker->numberBetween(1, 200),
         ];
     }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\FlightController;
 use App\Http\Controllers\Api\BookingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\EnterpriseMiddleware;
+use Illuminate\Support\Facades\Log;
 
 // Public routes
 Route::post('auth/register', [UserController::class, 'store']);
@@ -52,4 +53,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('bookings', [BookingController::class, 'store'])->name('bookings.store');
         Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     });
+});
+
+// Global exception handler for API routes
+Route::fallback(function () {
+    $message = 'API route not found: ' . request()->url() . ' | Method: ' . request()->method();
+    Log::error($message, [
+        'headers' => request()->headers->all(),
+        'body' => request()->all(),
+    ]);
+    return response()->json(['message' => 'Route not found'], 404);
 });
